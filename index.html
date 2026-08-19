@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rede Violeta</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- ─── Banner Campanha ─── -->
+<div class="campaign-banner">
+  <i class="fa-solid fa-ribbon"></i> AGOSTO LILÁS 2026 <span>|</span> Pelo fim da violência contra a mulher <span>|</span> 🌸
+</div>
+
+<div class="academic-bar">
+  Projeto acadêmico desenvolvido para a <strong>Faculdade Cruzeiro do Sul</strong>
+</div>
+
+<!-- ───────── Header ───────── -->
+<header>
+  <div class="header-ribbon"></div>
+  <div class="header-inner">
+    <div class="header-campaign"><i class="fa-solid fa-ribbon dot-spin"></i> Agosto Lilás 2026</div>
+    <img src="img/img.jpeg" alt="Rede Violeta" class="header-logo" />
+    <h1>Rede Violeta</h1>
+    <p class="h1-sub">Rede Violeta — Juntas contra a violência</p>
+    <p>Um espaço seguro para desabafar, aprender e denunciar o assédio.</p>
+    <span class="safe-badge"><i class="fa-solid fa-lock"></i> Ambiente confidencial</span>
+  </div>
+</header>
+
+<!-- ─── Faixa de Confiabilidade ─── -->
+<div class="trust-strip" role="list" aria-label="Indicadores de segurança">
+  <div class="trust-item" role="listitem">
+    <span class="trust-icon"><i class="fa-solid fa-lock"></i></span>
+    <div>
+      <strong>Sigilo total</strong>
+      <span>Seus dados nunca são compartilhados</span>
+    </div>
+  </div>
+  <div class="trust-sep" aria-hidden="true"></div>
+  <div class="trust-item" role="listitem">
+    <span class="trust-icon"><i class="fa-solid fa-shield-halved"></i></span>
+    <div>
+      <strong>Denúncia anônima</strong>
+      <span>Você escolhe se quer se identificar</span>
+    </div>
+  </div>
+  <div class="trust-sep" aria-hidden="true"></div>
+  <div class="trust-item" role="listitem">
+    <span class="trust-icon"><i class="fa-solid fa-file-contract"></i></span>
+    <div>
+      <strong>Conforme a LGPD</strong>
+      <span>Lei nº 13.709/2018</span>
+    </div>
+  </div>
+  <div class="trust-sep" aria-hidden="true"></div>
+  <div class="trust-item" role="listitem">
+    <span class="trust-icon"><i class="fa-solid fa-lock"></i></span>
+    <div>
+      <strong>Criptografado</strong>
+      <span>Transmissão segura de informações</span>
+    </div>
+  </div>
+  <div class="trust-sep" aria-hidden="true"></div>
+  <div class="trust-item" role="listitem">
+    <span class="trust-icon"><i class="fa-solid fa-circle-check"></i></span>
+    <div>
+      <strong>Sem rastreamento</strong>
+      <span>Nenhum registro de IP ou dispositivo</span>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── Hero ───────── -->
+<div class="hero-wrap" id="inicio">
+  <div class="hero">
+    <div>
+      <span class="hero-label">🌷 Informação também é proteção</span>
+      <h1>Você não está <span>sozinha.</span></h1>
+      <p class="hero-desc">
+        A <strong>Rede Violeta</strong> é um projeto acadêmico criado para informar,
+        acolher e apresentar caminhos de apoio para mulheres que estejam passando
+        por situações de violência.
+      </p>
+      <div class="hero-buttons">
+        <a href="#" class="btn-emergency-hero" onclick="switchTab('recursos'); document.querySelector('.tab-nav').scrollIntoView({behavior:'smooth'}); return false;">
+          🚨 Preciso de ajuda
+        </a>
+        <a href="#" class="btn-cases-hero" onclick="switchTab('identificar'); document.querySelector('.tab-nav').scrollIntoView({behavior:'smooth'}); return false;">
+          Conheça os casos
+        </a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="lilac-circle">
+        <div class="art-content">
+          <div class="art-heart">💜</div>
+          <h3>Acolhimento</h3>
+          <p>respeito • informação • proteção</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── Tabs ───────── -->
+<nav class="tab-nav" role="tablist">
+  <button class="tab-btn active" onclick="switchTab('desabafo')" role="tab" aria-selected="true">
+    <i class="fa-solid fa-comments"></i> Desabafo
+  </button>
+  <button class="tab-btn" onclick="switchTab('identificar')" role="tab" aria-selected="false">
+    <i class="fa-solid fa-magnifying-glass"></i> Conheça os Casos
+  </button>
+  <button class="tab-btn" onclick="switchTab('quiz')" role="tab" aria-selected="false">
+    <i class="fa-solid fa-clipboard-list"></i> Meu Caso
+  </button>
+  <button class="tab-btn" onclick="switchTab('recursos')" role="tab" aria-selected="false">
+    <i class="fa-solid fa-hand-holding-heart"></i> Recursos & Apoio
+  </button>
+  <button class="tab-btn" onclick="switchTab('faq')" role="tab" aria-selected="false">
+    <i class="fa-solid fa-circle-question"></i> FAQ
+  </button>
+  <button class="tab-btn" onclick="switchTab('alertas')" role="tab" aria-selected="false">
+    <i class="fa-solid fa-bell"></i> Alertas
+  </button>
+</nav>
+
+<!-- ───────── Main ───────── -->
+<main>
+
+  <!-- ══════ ABA 1 — DESABAFO ══════ -->
+  <section id="tab-desabafo" class="tab-pane active">
+
+    <div class="card banner-card">
+      <img src="img/img.jpeg" alt="Rede Violeta — Agosto Lilás — Violência não é amor" class="banner-img" />
+    </div>
+
+    <div class="hotline-strip">
+      <span class="hl-icon"><i class="fa-solid fa-phone-volume"></i></span>
+      <div class="hl-text">
+        <strong>Precisa de ajuda agora?</strong>
+        <span>Canais de apoio 24h — Agosto Lilás pelo seu direito de dizer NÃO</span>
+      </div>
+      <div class="hl-numbers">
+        <a href="tel:180" class="hotline-number hn-lilac"><i class="fa-solid fa-phone"></i> 180 — Central da Mulher</a>
+        <a href="tel:188" class="hotline-number hn-blue"><i class="fa-solid fa-phone"></i> 188 — CVV</a>
+      </div>
+    </div>
+
+    <div class="message-card">
+      <div class="message-icon">🌷</div>
+      <h2>Uma mensagem para você</h2>
+      <p id="comfortMessage">&ldquo;Você merece viver com paz, respeito, segurança e liberdade.&rdquo;</p>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-comments"></i> Espaço de desabafo</h2>
+      <p>Aqui você pode escrever o que está sentindo de forma livre e segura. Suas palavras são tratadas com total sigilo.</p>
+
+      <div class="mood-wrap">
+        <label class="mood-label">Como você está se sentindo agora?</label>
+        <div class="mood-row" id="moodRow">
+          <button class="mood-btn" data-mood="triste"        title="Triste">😢</button>
+          <button class="mood-btn" data-mood="com raiva"     title="Com raiva">😡</button>
+          <button class="mood-btn" data-mood="com medo"      title="Com medo">😨</button>
+          <button class="mood-btn" data-mood="perdida/o"     title="Perdida/o">😶‍🌫️</button>
+          <button class="mood-btn" data-mood="envergonhada/o" title="Envergonhada/o">😳</button>
+          <button class="mood-btn" data-mood="aliviada/o"    title="Aliviada/o">😮‍💨</button>
+          <button class="mood-btn" data-mood="esperançosa/o" title="Esperançosa/o">🌱</button>
+        </div>
+      </div>
+
+      <textarea id="desabafoText"
+        placeholder="Escreva aqui o que está sentindo… Pode ser sobre algo que aconteceu, algo que te incomoda ou simplesmente como está o seu dia. Você não está sozinha/o."
+        oninput="updateCharCount(this,'desabafoCount',2000)" maxlength="2000"></textarea>
+      <div class="char-count"><span id="desabafoCount">0</span>/2000 caracteres</div>
+
+      <div id="moodFeedback" class="alert alert-info mt-14 is-hidden">
+        <span><i class="fa-solid fa-lightbulb"></i></span>
+        <span id="moodFeedbackText"></span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="enviarDesabafo()"><i class="fa-solid fa-paper-plane"></i> Registrar meu desabafo</button>
+        <button class="btn btn-outline" onclick="limparDesabafo()"><i class="fa-solid fa-trash"></i> Limpar</button>
+      </div>
+    </div>
+
+    <div class="card is-hidden" id="desabafoSuccess">
+      <div class="success-overlay show">
+        <div class="success-circle"><i class="fa-solid fa-check"></i></div>
+        <h3>Obrigada por confiar!</h3>
+        <p>Seu desabafo foi registrado com segurança. Lembre-se: você merece apoio e não está sozinha/o nessa situação.</p>
+        <div id="assedioClassif" class="alert alert-info mt-12 is-hidden"></div>
+        <div id="formalizarConfirm" class="alert alert-success mt-10 is-hidden"><span><i class="fa-solid fa-check"></i></span><span>Denúncia formalizada com protocolo.</span></div>
+        <div class="btn-row centered mt-16">
+          <button class="btn btn-outline is-hidden" id="btnFormalizar" onclick="formalizarDenuncia()"><i class="fa-solid fa-file-lines"></i> Formalizar Denúncia</button>
+          <button class="btn btn-outline mt-18" onclick="novoDesabafo()">Fazer outro desabafo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-seedling"></i> Recursos de bem-estar</h2>
+      <p>Algumas formas de cuidar de você neste momento:</p>
+      <ul class="checklist mt-12">
+        <li>Respire fundo: inspire por 4 segundos, segure por 4, expire por 6.</li>
+        <li>Converse com alguém de confiança — amiga/o, familiar ou colega.</li>
+        <li>Anote o que aconteceu: data, hora, local e testemunhas.</li>
+        <li>Busque apoio psicológico; muitas cidades oferecem serviço gratuito (CAPS).</li>
+        <li>Você tem o direito de dizer não e de buscar ajuda a qualquer momento.</li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ══════ ABA 2 — Conheça os Casos ══════ -->
+  <section id="tab-identificar" class="tab-pane">
+
+    <div class="card card-agosto">
+      <h2><i class="fa-solid fa-ribbon"></i> O que é o Agosto Lilás?</h2>
+      <p>O <strong>Agosto Lilás</strong> é um movimento nacional de conscientização contra a violência doméstica e sexual. Instituído em agosto — mês da Lei Maria da Penha (Lei nº 11.340/2006, sancionada em 07/08/2006) — o movimento usa o roxo/lilás como símbolo de resistência e esperança.</p>
+      <p class="muted">No Brasil, <strong>1 mulher é vítima de violência a cada 6 minutos</strong>. Falar sobre isso é o primeiro passo para mudar.</p>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-book-open"></i> Casos que marcaram a história</h2>
+      <p>Conhecer casos históricos ajuda a compreender a importância da prevenção, da informação e da rede de proteção.</p>
+      <div class="simple-cases-grid">
+
+        <article class="simple-case-card">
+          <span class="case-year-badge">1976</span>
+          <h3>Ângela Diniz</h3>
+          <p>A socialite mineira foi assassinada pelo então namorado. O julgamento provocou grande debate social sobre a culpabilização da vítima e impulsionou discussões importantes sobre a violência contra mulheres.</p>
+          <div class="case-msg-box">💜 O caso contribuiu para debates históricos sobre violência contra mulheres e sobre argumentos que culpabilizam vítimas.</div>
+        </article>
+
+        <article class="simple-case-card">
+          <span class="case-year-badge">1992</span>
+          <h3>Daniella Perez</h3>
+          <p>A atriz e bailarina foi assassinada em 1992. O caso provocou grande mobilização social e a participação de sua mãe, Gloria Perez, em mudanças na legislação penal.</p>
+          <div class="case-msg-box">💜 O caso mostra como a mobilização social pode contribuir para mudanças importantes na legislação.</div>
+        </article>
+
+        <article class="simple-case-card">
+          <span class="case-year-badge">2008</span>
+          <h3>Eloá Pimentel</h3>
+          <p>Aos 15 anos, Eloá foi mantida em cárcere privado pelo ex-namorado em Santo André, SP. O caso teve grande repercussão nacional e o agressor foi condenado a 98 anos e 8 meses.</p>
+          <div class="case-msg-box">💜 O caso reforça a importância de reconhecer situações de controle e ameaça e buscar ajuda.</div>
+        </article>
+
+        <article class="simple-case-card">
+          <span class="case-year-badge">2010</span>
+          <h3>Eliza Samudio</h3>
+          <p>Eliza desapareceu em 2010. O caso envolveu o então goleiro Bruno Fernandes e teve grande repercussão nacional, evidenciando a importância de redes de proteção.</p>
+          <div class="case-msg-box">💜 A história reforça a importância de redes de proteção e de canais para pedir ajuda.</div>
+        </article>
+
+        <article class="simple-case-card">
+          <span class="case-year-badge">2010</span>
+          <h3>Mércia Nakashima</h3>
+          <p>A advogada foi assassinada em 2010. O caso foi julgado pelo Tribunal do Júri de Guarulhos — primeiro julgamento televisionado ao vivo no Brasil. O agressor foi condenado a 22 anos e 8 meses.</p>
+          <div class="case-msg-box">💜 O caso evidencia a importância da investigação, da Justiça e do acolhimento às famílias das vítimas.</div>
+        </article>
+
+      </div>
+      <p class="cases-note"><strong>Importante:</strong> os casos apresentados são fatos históricos utilizados exclusivamente para fins educativos e de conscientização.</p>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-magnifying-glass"></i> O que é assédio?</h2>
+      <p>Assédio é qualquer comportamento indesejado que cause constrangimento, humilhação, intimidação ou sofrimento. Pode ser físico, verbal, virtual ou psicológico.</p>
+      <div class="alert alert-warning mt-14">
+        <span><i class="fa-solid fa-triangle-exclamation"></i></span>
+        <span>O assédio <strong>nunca</strong> é culpa de quem sofre. Independentemente de roupa, comportamento ou relação com o agressor.</span>
+      </div>
+    </div>
+
+    <div class="accordion">
+
+      <div class="acc-item">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          <span class="acc-icon"><i class="fa-solid fa-building"></i></span> Assédio Moral no Trabalho
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>Exposição repetida a situações humilhantes ou constrangedoras no ambiente de trabalho.</p>
+          <ul class="checklist mt-10">
+            <li>Ser ignorada/o sistematicamente por colegas ou superiores.</li>
+            <li>Receber tarefas impossíveis de cumprir para ser culpabilizada/o.</li>
+            <li>Sofrer piadas, apelidos ofensivos ou humilhações na frente de outros.</li>
+            <li>Ter méritos negados ou trabalho atribuído a outra pessoa.</li>
+            <li>Ameaças constantes de demissão sem motivo justificado.</li>
+            <li>Isolamento forçado ou retirada de responsabilidades sem explicação.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          <span class="acc-icon"><i class="fa-solid fa-heart-pulse"></i></span> Assédio Sexual
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>Conduta de natureza sexual não desejada, que constranja ou cause desconforto.</p>
+          <ul class="checklist mt-10">
+            <li>Comentários, piadas ou insinuações de cunho sexual.</li>
+            <li>Toques não consentidos em qualquer parte do corpo.</li>
+            <li>Convites insistentes para encontros após rejeição clara.</li>
+            <li>Envio de imagens, vídeos ou mensagens de conteúdo sexual não solicitado.</li>
+            <li>Chantagem com vantagens profissionais em troca de favores sexuais.</li>
+            <li>Olhares ou gestos lascivos e intimidadores.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          <span class="acc-icon"><i class="fa-solid fa-mobile-screen"></i></span> Assédio Virtual (Cyberbullying / Stalking Online)
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>Perseguição, humilhação ou ameaças realizadas por meios digitais.</p>
+          <ul class="checklist mt-10">
+            <li>Mensagens ofensivas, ameaças ou difamação em redes sociais.</li>
+            <li>Compartilhamento de fotos ou vídeos íntimos sem consentimento (revenge porn).</li>
+            <li>Monitoramento excessivo de perfis, localização ou atividades online.</li>
+            <li>Criação de perfis falsos para assediar ou difamar.</li>
+            <li>Exclusão social online organizada por um grupo.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          <span class="acc-icon"><i class="fa-solid fa-house"></i></span> Assédio Doméstico / Familiar
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>Comportamentos controladores e abusivos dentro de relações familiares ou afetivas.</p>
+          <ul class="checklist mt-10">
+            <li>Controle de com quem você fala, sai ou se relaciona.</li>
+            <li>Críticas constantes, xingamentos ou desvalorização.</li>
+            <li>Ameaças veladas ou explícitas de agressão física.</li>
+            <li>Controle financeiro — impedir acesso ao próprio dinheiro.</li>
+            <li>Ciúmes excessivos e cobranças de localização a todo momento.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          <span class="acc-icon"><i class="fa-solid fa-school"></i></span> Assédio Escolar (Bullying)
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>Comportamento agressivo e repetitivo contra estudantes em ambiente escolar.</p>
+          <ul class="checklist mt-10">
+            <li>Apelidos ofensivos, ridicularização ou exclusão do grupo.</li>
+            <li>Agressões físicas, empurrões ou destruição de objetos.</li>
+            <li>Ameaças ou chantagem por materiais escolares, dinheiro ou favores.</li>
+            <li>Difamação ou fofocas para isolar a vítima socialmente.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card mt-20">
+      <h2><i class="fa-solid fa-triangle-exclamation"></i> Sinais de alerta em você mesma/o</h2>
+      <p>Se você está passando por assédio, pode notar alguns desses efeitos:</p>
+      <div class="symptoms-grid">
+        <div class="alert alert-danger m-0"><span>😰</span><span>Ansiedade ou medo constante</span></div>
+        <div class="alert alert-danger m-0"><span>😴</span><span>Insônia ou pesadelos</span></div>
+        <div class="alert alert-warning m-0"><span>🤒</span><span>Dores físicas sem causa aparente</span></div>
+        <div class="alert alert-warning m-0"><span>😞</span><span>Queda na autoestima</span></div>
+        <div class="alert alert-info m-0"><span>🚪</span><span>Evitar lugares ou pessoas</span></div>
+        <div class="alert alert-info m-0"><span>🧩</span><span>Dificuldade de concentração</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-circle-check"></i> O que fazer se isso acontecer comigo?</h2>
+      <ol class="ol-steps">
+        <li><strong>Documente tudo</strong> — salve prints, e-mails, mensagens, datas e horários.</li>
+        <li><strong>Não confronte sozinha/o</strong> — especialmente se houver risco de violência.</li>
+        <li><strong>Busque testemunhas</strong> — alguém que tenha presenciado situações.</li>
+        <li><strong>Comunique à instituição</strong> — RH, direção escolar, conselho tutelar, etc.</li>
+        <li><strong>Registre boletim de ocorrência</strong> — na delegacia da mulher ou online.</li>
+        <li><strong>Procure apoio jurídico e psicológico</strong> — muitos são gratuitos.</li>
+      </ol>
+    </div>
+
+    <!-- Mapa integrado -->
+    <div id="timelineCard" class="card is-hidden">
+      <h2><i class="fa-solid fa-clock-rotate-left"></i> Linha do Tempo</h2>
+      <p>Eventos históricos relevantes para a legislação de proteção à mulher.</p>
+      <div id="timelineList" class="timeline mt-14"></div>
+    </div>
+
+    <!-- Mapa integrado -->
+    <div class="card">
+      <h2><i class="fa-solid fa-map-location-dot"></i> Delegacias da Mulher (DEAM)</h2>
+      <p>Encontre a DEAM mais próxima. Clique no marcador para ver endereço e telefone.</p>
+      <div id="mapContainer" class="map-container"></div>
+      <div id="mapLegendDelegacias" class="map-legend">
+        <div class="legend-item"><span class="legend-dot dot-purple"></span> Delegacia Especializada da Mulher (DEAM)</div>
+        <div class="legend-item"><span class="legend-dot dot-blue"></span> Clique no marcador para ver telefone e endereço</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════ ABA 4 — QUIZ (MEU CASO) ══════ -->
+  <section id="tab-quiz" class="tab-pane">
+    <div class="card">
+      <h2><i class="fa-solid fa-clipboard-list"></i> Meu Caso — Estou em situação de assédio?</h2>
+      <p>Responda as perguntas abaixo com sinceridade. O resultado é <strong>apenas orientativo</strong> e não substitui apoio profissional.</p>
+      <div class="quiz-progress-wrap quiz-wrap-mt">
+        <div class="quiz-progress-label">
+          <span id="qProgressLabel">Pergunta 1 de 8</span>
+          <span id="qProgressPct">0%</span>
+        </div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="qProgressBar"></div></div>
+      </div>
+      <div id="quizQuestions">
+        <div class="quiz-question" data-q="0"><p class="quiz-q-text">1. Alguém faz comentários, piadas ou gestos de conteúdo sexual ou íntimo sem sua permissão?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q0" value="2"> Sim, frequentemente</label><label class="quiz-opt"><input type="radio" name="q0" value="1"> Às vezes</label><label class="quiz-opt"><input type="radio" name="q0" value="0"> Não</label></div></div>
+        <div class="quiz-question is-hidden" data-q="1"><p class="quiz-q-text">2. Você sente medo ou ansiedade quando vai ao trabalho, escola ou se relaciona com alguém específico?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q1" value="2"> Sim, sempre</label><label class="quiz-opt"><input type="radio" name="q1" value="1"> Às vezes</label><label class="quiz-opt"><input type="radio" name="q1" value="0"> Não</label></div></div>
+        <div class="quiz-question is-hidden" data-q="2"><p class="quiz-q-text">3. Alguém te pressiona, chantageia ou ameaça para obter algum favor, presença ou contato?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q2" value="2"> Sim</label><label class="quiz-opt"><input type="radio" name="q2" value="1"> Já aconteceu uma vez</label><label class="quiz-opt"><input type="radio" name="q2" value="0"> Não</label></div></div>
+        <div class="quiz-question is-hidden" data-q="3"><p class="quiz-q-text">4. Você recebe mensagens, ligações ou contatos insistentes mesmo depois de pedir que parem?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q3" value="2"> Sim, frequentemente</label><label class="quiz-opt"><input type="radio" name="q3" value="1"> Às vezes</label><label class="quiz-opt"><input type="radio" name="q3" value="0"> Não</label></div></div>
+        <div class="quiz-question is-hidden" data-q="4"><p class="quiz-q-text">5. Alguém te humilha, grita, te diminui ou critica na frente de outras pessoas?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q4" value="2"> Sim, com frequência</label><label class="quiz-opt"><input type="radio" name="q4" value="1"> Raramente</label><label class="quiz-opt"><input type="radio" name="q4" value="0"> Não</label></div></div>
+        <div class="quiz-question is-hidden" data-q="5"><p class="quiz-q-text">6. Você evita certos lugares, situações ou pessoas por se sentir insegura/o?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q5" value="2"> Sim, muito</label><label class="quiz-opt"><input type="radio" name="q5" value="1"> Um pouco</label><label class="quiz-opt"><input type="radio" name="q5" value="0"> Não</label></div></div>
+        <div class="quiz-question is-hidden" data-q="6"><p class="quiz-q-text">7. Alguém controla o que você faz, com quem fala, onde vai ou como se veste?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q6" value="2"> Sim</label><label class="quiz-opt"><input type="radio" name="q6" value="1"> Às vezes tenta</label><label class="quiz-opt"><input type="radio" name="q6" value="0"> Não</label></div></div>
+        <div class="quiz-question is-hidden" data-q="7"><p class="quiz-q-text">8. Você se culpa por situações em que foi tratada/o de forma desrespeitosa?</p><div class="quiz-options"><label class="quiz-opt"><input type="radio" name="q7" value="2"> Sim, me culpo muito</label><label class="quiz-opt"><input type="radio" name="q7" value="1"> Às vezes</label><label class="quiz-opt"><input type="radio" name="q7" value="0"> Não</label></div></div>
+      </div>
+      <div id="quizResult" class="quiz-result is-hidden">
+        <div class="result-circle" id="resultCircle"></div>
+        <h3 id="resultTitle"></h3>
+        <p id="resultDesc" class="result-desc"></p>
+        <div id="resultAlerta" class="alert alert-danger result-alert is-hidden"><span><i class="fa-solid fa-circle-exclamation"></i></span><span>Ligue <strong>180</strong> agora ou acesse <strong>Recursos &amp; Apoio</strong>.</span></div>
+        <div class="btn-row centered">
+          <button class="btn btn-primary" onclick="switchTab('recursos')"><i class="fa-solid fa-hand-holding-heart"></i> Recursos &amp; Apoio</button>
+          <button class="btn btn-outline" onclick="resetQuiz()"><i class="fa-solid fa-rotate"></i> Refazer</button>
+        </div>
+      </div>
+      <div class="quiz-nav" id="quizNav">
+        <button class="btn btn-outline is-invisible" id="qBtnBack" onclick="quizNav(-1)">← Anterior</button>
+        <button class="btn btn-primary" id="qBtnNext" onclick="quizNav(1)">Próxima →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ ABA 5 — RECURSOS & APOIO ══════ -->
+  <section id="tab-recursos" class="tab-pane">
+    <div class="card">
+      <h2><i class="fa-solid fa-phone-volume"></i> Linhas de Apoio 24h</h2>
+      <p>Toque em uma opção para ligar agora.</p>
+      <div class="resource-grid">
+        <a href="tel:180" class="resource-card" aria-label="Ligar para 180, Central da Mulher"><span class="rc-icon"><i class="fa-solid fa-phone"></i></span><strong>180 — Central da Mulher</strong><span>Orientação, denúncia e encaminhamento. Gratuito, 24h.</span><span class="rc-badge">Ligar agora</span></a>
+        <a href="tel:190" class="resource-card" aria-label="Ligar para 190, Polícia Militar"><span class="rc-icon"><i class="fa-solid fa-shield-halved"></i></span><strong>190 — Polícia Militar</strong><span>Emergências e ocorrências em andamento.</span><span class="rc-badge">Ligar agora</span></a>
+        <a href="tel:100" class="resource-card" aria-label="Ligar para 100, Direitos Humanos"><span class="rc-icon"><i class="fa-solid fa-hand-holding-heart"></i></span><strong>100 — Direitos Humanos</strong><span>Violações de direitos, inclusive crianças e adolescentes.</span><span class="rc-badge">Ligar agora</span></a>
+        <a href="tel:188" class="resource-card" aria-label="Ligar para 188, CVV"><span class="rc-icon"><i class="fa-solid fa-heart"></i></span><strong>188 — CVV</strong><span>Centro de Valorização da Vida. Escuta e apoio emocional.</span><span class="rc-badge">Ligar agora</span></a>
+      </div>
+    </div>
+    <div class="card">
+      <h2><i class="fa-solid fa-landmark"></i> Apoio Jurídico Gratuito</h2>
+      <div class="resource-grid">
+        <a href="https://www.anadep.org.br" target="_blank" rel="noopener" class="resource-card" aria-label="Acessar o site da Defensoria Pública"><span class="rc-icon"><i class="fa-solid fa-scale-balanced"></i></span><strong>Defensoria Pública</strong><span>Assistência jurídica gratuita para quem não pode pagar advogado.</span><span class="rc-badge">Acessar site</span></a>
+        <a href="https://www.oab.org.br" target="_blank" rel="noopener" class="resource-card" aria-label="Acessar o site da OAB"><span class="rc-icon"><i class="fa-solid fa-building"></i></span><strong>OAB — Ordem dos Advogados</strong><span>Núcleos de prática jurídica e atendimento pro bono em muitas seccionais.</span><span class="rc-badge">Acessar site</span></a>
+        <a href="https://www.gov.br/mec/pt-br" target="_blank" rel="noopener" class="resource-card" aria-label="Acessar o site do Ministério da Educação"><span class="rc-icon"><i class="fa-solid fa-graduation-cap"></i></span><strong>Núcleos Universitários</strong><span>Clínicas jurídicas de faculdades oferecem atendimento gratuito supervisionado.</span><span class="rc-badge">Acessar site</span></a>
+        <a href="tel:180" class="resource-card"><span class="rc-icon"><i class="fa-solid fa-clipboard"></i></span><strong>Delegacia da Mulher (DEAM)</strong><span>Especializada em violência doméstica. Ligue 180 para localizar a mais próxima.</span><span class="rc-badge">Especializada</span></a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-brain"></i> Apoio Psicológico Gratuito</h2>
+      <p>Acesse os sites oficiais para encontrar atendimento perto de você.</p>
+      <div class="resource-grid">
+        <a href="https://www.gov.br/saude/pt-br/composicao/saes/saude-mental/caps" target="_blank" rel="noopener" class="resource-card" aria-label="Acessar informações oficiais sobre os CAPS">
+          <span class="rc-icon"><i class="fa-solid fa-hospital"></i></span>
+          <strong>CAPS — Centro de Atenção Psicossocial</strong>
+          <span>Serviço público gratuito de saúde mental. Para orientação, ligue 136 (Disque Saúde).</span>
+          <span class="rc-badge">Acessar site</span>
+        </a>
+        <a href="https://www.gov.br/mds/pt-br" target="_blank" rel="noopener" class="resource-card" aria-label="Acessar o site oficial do Ministério do Desenvolvimento e Assistência Social">
+          <span class="rc-icon"><i class="fa-solid fa-house"></i></span>
+          <strong>CRAS / CREAS</strong>
+          <span>Centro de Referência em Assistência Social. Para localizar atendimento, ligue 121 (Disque Social).</span>
+          <span class="rc-badge">Acessar site</span>
+        </a>
+        <a href="https://www.safernet.org.br" target="_blank" rel="noopener" class="resource-card">
+          <span class="rc-icon"><i class="fa-solid fa-globe"></i></span>
+          <strong>SaferNet Brasil</strong>
+          <span>Denúncia e apoio para crimes e violências na internet.</span>
+          <span class="rc-badge">Online</span>
+        </a>
+        <a href="https://www.gov.br/saude/pt-br" target="_blank" rel="noopener" class="resource-card" aria-label="Acessar o site oficial do Ministério da Saúde">
+          <span class="rc-icon"><i class="fa-solid fa-user-nurse"></i></span>
+          <strong>UBS — Unidade Básica de Saúde</strong>
+          <span>Solicite encaminhamento para psicólogo pelo SUS. Para orientação, ligue 136 (Disque Saúde).</span>
+          <span class="rc-badge">Acessar site</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-mobile-screen"></i> Recursos Digitais</h2>
+      <ul class="checklist mt-10">
+        <li><strong>App Minha Voz</strong> — Registro discreto de ocorrências diretamente pelo celular.</li>
+        <li><strong>Portal Ligue 180</strong> — ligue180.mdh.gov.br — denúncias e orientações online.</li>
+        <li><strong>Delegacia Online SP</strong> — delegaciaeletronica.policiacivil.sp.gov.br</li>
+        <li><strong>Jusbrasil</strong> — Consulta gratuita de processos e orientações jurídicas.</li>
+      </ul>
+    </div>
+    <div id="recursosBackend"></div>
+  </section>
+
+  <!-- ══════ ABA 6 — FAQ ══════ -->
+  <section id="tab-faq" class="tab-pane">
+    <div class="card">
+      <h2><i class="fa-solid fa-circle-question"></i> Perguntas Frequentes</h2>
+      <input class="faq-search" type="text" placeholder="Buscar pergunta…" oninput="filtrarFAQ(this.value)" />
+
+      <div class="accordion" id="faqAccordion">
+
+        <div class="acc-item faq-item" data-text="o que é assédio diferença violência">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-heart"></i></span> O que diferencia assédio de violência?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p><strong>Assédio</strong> é um comportamento repetido e indesejado de natureza sexual, moral ou psicológica. <strong>Violência</strong> pode ser um único ato físico, sexual, psicológico, patrimonial ou moral. Ambos são crimes — a diferença está na forma e na frequência, mas os dois merecem denúncia.</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="denunciar anônima sem me identificar">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-lock"></i></span> Posso denunciar de forma anônima?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>Sim. O <strong>Disque 100</strong> e o <strong>Disque 180</strong> aceitam denúncias anônimas. A identidade não é necessária para que a denúncia seja investigada.</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="preciso de advogado processo judicial">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-scale-balanced"></i></span> Preciso de advogado para denunciar?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>Não para o Boletim de Ocorrência. Você pode registrar sozinha/o na delegacia ou online. Para processos judiciais é recomendado, mas a <strong>Defensoria Pública</strong> oferece assistência jurídica <strong>gratuita</strong> para quem não tem condições de contratar advogado particular.</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="lei maria da penha protege homens lgbtq">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-ribbon"></i></span> A Lei Maria da Penha protege apenas mulheres cisgênero?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>Não. O STJ e o STF entendem que a Lei Maria da Penha protege <strong>mulheres trans e travestis</strong>, pois o critério é gênero feminino, não biológico. Homens cisgêneros podem recorrer ao Código Penal e à Lei nº 13.772/2018 em casos de violência doméstica.</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="o que acontece depois denuncia investigação">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-magnifying-glass"></i></span> O que acontece depois que eu denuncio?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>1. A delegacia abre um <strong>Inquérito Policial</strong>.<br>
+               2. O Ministério Público recebe o inquérito e pode oferecer denúncia criminal.<br>
+               3. Você pode solicitar <strong>Medidas Protetivas de Urgência</strong> (afastamento do agressor, por exemplo).<br>
+               4. O juiz decide sobre as medidas em até 48h.<br>
+               5. O processo segue para julgamento.</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="posso retirar denúncia desistir">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-circle-exclamation"></i></span> Posso retirar uma denúncia depois?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>Em crimes de <strong>ação penal pública</strong> (como os previstos na Lei Maria da Penha), a denúncia <strong>não pode ser retirada</strong> pela vítima após o processo iniciado — cabe ao Estado prosseguir. Isso protege a vítima de pressões do agressor. A retratação só é possível antes do recebimento da denúncia pelo juiz, mediante audiência.</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="assédio trabalho emprego como provar">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-building"></i></span> Como provar assédio no trabalho?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>Guarde <strong>prints de mensagens</strong>, e-mails, registros de chamadas. Anote datas, horários e o que foi dito. Identifique <strong>testemunhas</strong>. Registre ocorrência no RH com protocolo. Em seguida, procure a <strong>Delegacia do Trabalho (MTE)</strong> ou ajuíze ação na <strong>Justiça do Trabalho</strong>. O assédio moral é ilícito civil (art. 186 CC) e pode resultar em demissão por justa causa do agressor.</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="medida protetiva como funciona afastamento">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-shield-halved"></i></span> O que é uma Medida Protetiva de Urgência?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>É uma determinação judicial que pode: proibir o agressor de se aproximar da vítima; proibi-lo de contato por qualquer meio; retirá-lo do lar; suspender porte de arma. É solicitada ao registrar o B.O. e decidida pelo juiz em até <strong>48 horas</strong>. Descumprir medida protetiva é crime com pena de 3 meses a 2 anos de prisão (art. 24-A da Lei Maria da Penha).</p>
+          </div>
+        </div>
+
+        <div class="acc-item faq-item" data-text="importunação sexual crimes internet digital">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            <span class="acc-icon"><i class="fa-solid fa-mobile-screen"></i></span> Assédio virtual / online é crime?
+            <span class="acc-chevron">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>Sim. A <strong>Lei nº 13.772/2018</strong> criminaliza o registro não autorizado de conteúdo íntimo. A <strong>Lei nº 13.718/2018</strong> criou o crime de importunação sexual online. Compartilhamento de fotos íntimas sem consentimento (<em>revenge porn</em>) é crime com pena de 1 a 5 anos. Denuncie também pelo <strong>SaferNet</strong>.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="faqEmpty" class="alert alert-info mt-12 is-hidden">
+        <span><i class="fa-solid fa-magnifying-glass"></i></span><span>Nenhuma pergunta encontrada. Tente outro termo.</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════ ABA 9 — ALERTAS ══════ -->
+  <section id="tab-alertas" class="tab-pane">
+
+    <!-- Estatísticas de locais e tipos -->
+    <div class="card">
+      <h2><i class="fa-solid fa-triangle-exclamation"></i> Onde e como o assédio mais acontece</h2>
+      <p>Dados do <strong>Fórum Brasileiro de Segurança Pública 2023</strong> e do <strong>IPEA</strong>.</p>
+      <div class="stat-highlights">
+        <div class="stat-hl stat-hl-red">
+          <span class="stat-hl-num">70%</span>
+          <span class="stat-hl-label">dos casos de violência ocorrem na <strong>residência</strong> da vítima</span>
+        </div>
+        <div class="stat-hl stat-hl-orange">
+          <span class="stat-hl-num">14%</span>
+          <span class="stat-hl-label">acontecem em <strong>vias públicas</strong>, ruas e espaços abertos</span>
+        </div>
+        <div class="stat-hl stat-hl-purple">
+          <span class="stat-hl-num">66%</span>
+          <span class="stat-hl-label">dos agressores são <strong>parceiros ou ex-parceiros</strong></span>
+        </div>
+      </div>
+      <div class="env-grid mt-14">
+        <div class="env-card env-home">
+          <div class="env-icon"><i class="fa-solid fa-house"></i></div>
+          <div class="env-info">
+            <strong>Residência — 70%</strong>
+            <span>Assédio Moral · Violência Doméstica · Violência Física</span>
+            <p>Principal cenário de violência doméstica e psicológica. A vítima convive com o agressor.</p>
+          </div>
+        </div>
+        <div class="env-card env-street">
+          <div class="env-icon"><i class="fa-solid fa-road"></i></div>
+          <div class="env-info">
+            <strong>Via pública — 14%</strong>
+            <span>Importunação Sexual · Perseguição · Assédio Sexual</span>
+            <p>Ruas, praças, feiras e pontos de ônibus. Maior incidência nos horários de pico.</p>
+          </div>
+        </div>
+        <div class="env-card env-work">
+          <div class="env-icon"><i class="fa-solid fa-briefcase"></i></div>
+          <div class="env-info">
+            <strong>Local de trabalho — 8%</strong>
+            <span>Assédio Moral · Assédio Sexual</span>
+            <p>Praticado por colegas, superiores ou clientes. Muitas vezes silenciado por medo de demissão.</p>
+          </div>
+        </div>
+        <div class="env-card env-transport">
+          <div class="env-icon"><i class="fa-solid fa-bus"></i></div>
+          <div class="env-info">
+            <strong>Transporte público — 5%</strong>
+            <span>Importunação Sexual · Assédio Verbal</span>
+            <p>Metrô, ônibus e terminais. Especialmente intenso nos horários de pico.</p>
+          </div>
+        </div>
+        <div class="env-card env-school">
+          <div class="env-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <div class="env-info">
+            <strong>Escola / Universidade — 3%</strong>
+            <span>Bullying · Assédio Escolar · Assédio Sexual</span>
+            <p>Afeta principalmente jovens e adolescentes; pode começar no ambiente virtual.</p>
+          </div>
+        </div>
+        <div class="env-card env-digital">
+          <div class="env-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+          <div class="env-info">
+            <strong>Ambiente virtual — em crescimento</strong>
+            <span>Cyberbullying · Stalking Digital · Revenge Porn</span>
+            <p>Redes sociais, aplicativos e grupos de mensagem. Crimes com pena de 1 a 5 anos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-bell"></i> Criar Alerta de Abuso</h2>
+      <p>Registre uma situação de risco para alertar outras pessoas. Não inclua dados pessoais de vítimas.</p>
+      <form id="alertaForm" onsubmit="criarAlerta(event)" novalidate>
+        <div class="form-group"><label for="alertaTipo">Tipo de abuso <span class="req">*</span></label><select id="alertaTipo"><option value="">Selecione...</option><option>Assédio Sexual</option><option>Assédio Moral</option><option>Assédio Virtual / Cyberbullying</option><option>Violência Doméstica</option><option>Perseguição (Stalking)</option><option>Importunação Sexual</option><option>Violência Física</option><option>Outro</option></select></div>
+        <div class="form-row"><div class="form-group"><label for="alertaCidade">Cidade <span class="req">*</span></label><input type="text" id="alertaCidade" placeholder="Ex.: São Paulo" /></div><div class="form-group"><label for="alertaEstado">Estado <span class="req">*</span></label><select id="alertaEstado"><option value="">UF</option><option>AC</option><option>AL</option><option>AM</option><option>AP</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MG</option><option>MS</option><option>MT</option><option>PA</option><option>PB</option><option>PE</option><option>PI</option><option>PR</option><option>RJ</option><option>RN</option><option>RO</option><option>RR</option><option>RS</option><option>SC</option><option>SE</option><option>SP</option><option>TO</option></select></div></div>
+        <div class="form-group"><label for="alertaLocal">Local específico (opcional)</label><input type="text" id="alertaLocal" placeholder="Ex.: Estação Sé, Metrô Linha 3" /></div>
+        <div class="form-group"><label for="alertaDesc">Descreva a situação <span class="req">*</span></label><textarea id="alertaDesc" oninput="updateCharCount(this,'alertaCount',500)" maxlength="500" placeholder="O que está acontecendo? Evite nomes de vítimas."></textarea><div class="char-count"><span id="alertaCount">0</span>/500 caracteres</div></div>
+        <div class="form-group"><label>Nível de urgência</label><div class="radio-group"><label class="radio-opt"><input type="radio" name="urgencia" value="baixa"> <i class="fa-solid fa-circle urgencia-baixa"></i> Baixa</label><label class="radio-opt"><input type="radio" name="urgencia" value="media" checked> <i class="fa-solid fa-circle urgencia-media"></i> Média</label><label class="radio-opt"><input type="radio" name="urgencia" value="alta"> <i class="fa-solid fa-circle urgencia-alta"></i> Alta — risco imediato</label></div></div>
+        <div class="btn-row"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-bell"></i> Publicar Alerta</button><button type="button" class="btn btn-outline" onclick="resetAlertaForm()"><i class="fa-solid fa-trash"></i> Limpar</button></div>
+      </form>
+    </div>
+    <div class="alert-filters" role="group" aria-label="Filtrar alertas">
+      <button class="filter-btn active" onclick="filtrarAlertas('todos')">Todos</button>
+      <button class="filter-btn" onclick="filtrarAlertas('Sexual')">Sexual</button>
+      <button class="filter-btn" onclick="filtrarAlertas('Moral')">Moral</button>
+      <button class="filter-btn" onclick="filtrarAlertas('Violência')">Violência</button>
+      <button class="filter-btn" onclick="filtrarAlertas('Virtual')">Virtual</button>
+      <button class="filter-btn filter-urgente" onclick="filtrarAlertas('__alta__')"><i class="fa-solid fa-triangle-exclamation"></i> Urgentes</button>
+    </div>
+    <div id="alertaFeed">
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Importunação Sexual</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>São Paulo, SP</strong> — Metrô Linha 2-Verde</div>
+        <p class="alerta-desc">Relatos recorrentes de importunação sexual nos vagões entre as estações Paraíso e Ana Rosa nos horários de pico.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 1h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(1)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">18</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Perseguição (Stalking)</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Curitiba, PR</strong> — Bairro Água Verde</div>
+        <p class="alerta-desc">Homem seguindo mulheres que saem do trabalho no período noturno. Comportamento identificado em mais de uma ocasião.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 1h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(4)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">9</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Violência Doméstica</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Belo Horizonte, MG</strong> — Bairro Santa Efigênia</div>
+        <p class="alerta-desc">Situação de violência doméstica em andamento relatada por vizinhas. Pedido de apoio e orientação à comunidade.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 2h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(3)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">7</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Moral</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Brasília, DF</strong> — Setor Bancário Sul — empresa privada</div>
+        <p class="alerta-desc">Supervisora humilha funcionárias publicamente em reuniões, atribui erros alheios a elas e ameaça demissão sem justificativa. Pelo menos 5 relatos confirmados.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 3h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(7)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">8</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Virtual / Cyberbullying</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Fortaleza, CE</strong> — TikTok / Telegram</div>
+        <p class="alerta-desc">Grupo no Telegram compartilha fotos e vídeos íntimos de mulheres sem consentimento. Vítimas identificadas já acionaram a SaferNet.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 4h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(9)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">22</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Virtual / Cyberbullying</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Rio de Janeiro, RJ</strong> — Instagram / WhatsApp</div>
+        <p class="alerta-desc">Perfis falsos criados para assediar mulheres com mensagens íntimas não solicitadas. Múltiplas vítimas relataram o mesmo padrão.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 5h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(2)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">11</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Importunação Sexual</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Recife, PE</strong> — Terminal Integrado de Passageiros</div>
+        <p class="alerta-desc">Homem encosta e faz comentários obscenos em mulheres que aguardam ônibus no período da tarde. Relatado por passageiras em diferentes dias.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 6h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(8)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">12</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Violência Física</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Manaus, AM</strong> — Bairro Compensa</div>
+        <p class="alerta-desc">Mulher agredida fisicamente por parceiro em via pública. Vizinhos chamaram a PM. Vítima está em abrigo. Caso em acompanhamento pela Delegacia da Mulher.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 8h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(10)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">6</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Perseguição (Stalking)</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Campinas, SP</strong> — Universidade Estadual de Campinas</div>
+        <p class="alerta-desc">Ex-aluno persegue estudante dentro do campus, manda mensagens ameaçadoras e aparece em locais que ela frequenta. Caso registrado na ouvidoria da universidade.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 10h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(11)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">17</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Sexual</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Salvador, BA</strong> — Orla de Ondina</div>
+        <p class="alerta-desc">Grupo de homens abordando mulheres de forma agressiva na orla. Situação especialmente intensa nos finais de semana.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 12h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(6)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">14</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Violência Física</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Natal, RN</strong> — Bairro Lagoa Nova</div>
+        <p class="alerta-desc">Mulher foi agredida com socos pelo companheiro após tentar terminar o relacionamento. Filho menor de idade presenciou. Medida protetiva solicitada.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 12h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(17)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">11</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Sexual</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Florianópolis, SC</strong> — Praia de Jurerê</div>
+        <p class="alerta-desc">Homens abordam mulheres que estão sozinhas na praia, fazem comentários sexuais e seguem mesmo após pedido de afastamento. Situações repetidas nos fins de semana.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 14h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(12)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">10</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Importunação Sexual</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Belém, PA</strong> — Ver-o-Peso — feira popular</div>
+        <p class="alerta-desc">Mulheres relatam apalpamentos e comentários sexuais na feira, especialmente em dias de maior movimento. Policiamento pedido por feirantes.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 16h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(16)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">7</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Sexual</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Vitória, ES</strong> — Escritório de advocacia — Centro</div>
+        <p class="alerta-desc">Advogada relata que sócio faz comentários sobre seu corpo e envia mensagens com conotação sexual. Dois outros funcionários testemunharam situações.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 18h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(18)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">8</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-alta">
+        <div class="alerta-header"><span class="alerta-tipo">Violência Doméstica</span><span class="urgencia-tag urgencia-tag-alta"><i class="fa-solid fa-circle"></i> Alta</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Goiânia, GO</strong> — Setor Jardim América</div>
+        <p class="alerta-desc">Moradora relata agressões verbais e físicas frequentes. Tentou registrar BO, mas se sentiu intimidada. Vizinhos solicitam apoio de assistência social.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 20h atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(13)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">4</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Moral</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Porto Alegre, RS</strong> — Centro Comercial Iguatemi</div>
+        <p class="alerta-desc">Funcionárias relatam assédio moral sistemático por parte de gerência. Situação já reportada ao RH sem resolução.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 1d atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(5)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">5</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-media">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Moral</span><span class="urgencia-tag urgencia-tag-media"><i class="fa-solid fa-circle"></i> Média</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>São Luís, MA</strong> — Hospital público regional</div>
+        <p class="alerta-desc">Enfermeiras relatam chefia que distribui tarefas degradantes apenas para mulheres, faz piadas sexistas e pune quem reclama com escalas piores.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 1d atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(14)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">9</span></button></div>
+      </div>
+      <div class="alerta-card urgencia-borda-baixa">
+        <div class="alerta-header"><span class="alerta-tipo">Assédio Virtual / Cyberbullying</span><span class="urgencia-tag urgencia-tag-baixa"><i class="fa-solid fa-circle"></i> Baixa</span></div>
+        <div class="alerta-local"><i class="fa-solid fa-location-dot"></i> <strong>Porto Velho, RO</strong> — Facebook / grupos escolares</div>
+        <p class="alerta-desc">Grupo de alunos cria memes ofensivos com fotos de colegas do sexo feminino e circula em grupos de turma. Direção da escola foi comunicada.</p>
+        <div class="alerta-footer"><span class="alerta-ts"><i class="fa-regular fa-clock"></i> 1d atrás</span><button class="alerta-confirmar" onclick="confirmarAlerta(15)" aria-label="Confirmar alerta"><i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">3</span></button></div>
+      </div>
+    </div>
+    <div id="alertaVazio" class="alert alert-info mt-14 is-hidden"><span><i class="fa-solid fa-magnifying-glass"></i></span><span>Nenhum alerta encontrado para este filtro.</span></div>
+  </section>
+
+  <!-- ══════ PROJETO ACADÊMÍCO ══════ -->
+  <div class="academic-section-wrap">
+    <div class="academic-box">
+      <div class="university">🎓 Faculdade Cruzeiro do Sul</div>
+      <h2>Projeto Acadêmico — Rede Violeta</h2>
+      <p>Este site foi desenvolvido como projeto acadêmico para a Faculdade Cruzeiro do Sul, com finalidade educativa e de conscientização sobre violência contra a mulher.</p>
+      <p>A Rede Violeta não substitui serviços públicos, atendimento policial, médico, psicológico ou jurídico profissional.</p>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="app.js"></script>
+
+<!-- Assistente Virtual — Violeta -->
+<div class="simple-modal" id="assistantModal">
+  <div class="simple-chat-window">
+    <button class="simple-chat-close" onclick="closeAssistant()" aria-label="Fechar">&times;</button>
+    <div class="simple-chat-header">
+      <div class="violeta-avatar" aria-hidden="true">
+        <img src="https://api.dicebear.com/8.x/lorelei/svg?seed=violeta&amp;backgroundColor=eadcf3" alt="" class="violeta-avatar-img">
+      </div>
+      <div class="violeta-header-info">
+        <h2>Violeta</h2>
+        <p>Assistente da Rede Violeta &middot; Online 💜</p>
+      </div>
+    </div>
+    <div class="simple-chat-box" id="simpleChatBox">
+      <div class="simple-bot-msg">Olá! 💜 Sou a <strong>Violeta</strong>, assistente da Rede Violeta.
+
+Posso ajudar você a encontrar informações sobre os canais de emergência, explicar os recursos do site ou conversar sobre situações de violência.
+
+Se houver perigo imediato, procure um local seguro e ligue 190.</div>
+    </div>
+    <div class="simple-chat-input">
+      <input type="text" id="simpleUserInput" placeholder="Fale com a Violeta..." onkeydown="handleSimpleEnter(event)" aria-label="Mensagem para Violeta">
+      <button onclick="sendSimpleMessage()">Enviar</button>
+    </div>
+  </div>
+</div>
+<button class="ai-fab" onclick="openAssistant()" aria-label="Falar com Violeta">
+  <span class="ai-fab-ring"></span>
+  <img src="https://api.dicebear.com/8.x/lorelei/svg?seed=violeta&amp;backgroundColor=a982bd" alt="" class="violeta-fab-img">
+  <span class="ai-fab-label">Violeta</span>
+</button>
+
+<footer>
+  <div class="ft-ribbon"></div>
+  <p><i class="fa-solid fa-ribbon"></i> <strong>Rede Violeta</strong> — Agosto Lilás 2026 — Juntas contra a violência</p>
+  <p>Lei nº 11.340/2006 — <strong>Lei Maria da Penha</strong> | Lei nº 13.709/2018 — LGPD</p>
+  <div class="ft-links">
+    <a href="tel:180"><i class="fa-solid fa-phone"></i> Central da Mulher — 180</a>
+    <a href="tel:190"><i class="fa-solid fa-shield-halved"></i> Polícia — 190</a>
+    <a href="tel:100"><i class="fa-solid fa-phone"></i> Direitos Humanos — 100</a>
+    <a href="tel:188"><i class="fa-solid fa-phone"></i> CVV — 188</a>
+  </div>
+  <p class="footer-note">Suas informações são tratadas com sigilo absoluto.</p>
+</footer>
+
+<script>
+/* ── Mensagem rotativa ── */
+const comfortMessages = [
+  "Você merece viver com paz, respeito, segurança e liberdade.",
+  "Buscar ajuda não é sinal de fraqueza. É um passo de proteção.",
+  "Você não precisa enfrentar uma situação de violência sozinha.",
+  "Informação pode ajudar você a conhecer caminhos de apoio.",
+  "Nenhuma forma de violência deve ser normalizada ou justificada."
+];
+let comfortIdx = 0;
+setInterval(() => {
+  comfortIdx = (comfortIdx + 1) % comfortMessages.length;
+  const el = document.getElementById('comfortMessage');
+  if (el) el.textContent = '\u201c' + comfortMessages[comfortIdx] + '\u201d';
+}, 6500);
+
+/* ── Chat simples ── */
+function openAssistant() {
+  document.getElementById('assistantModal').style.display = 'block';
+  setTimeout(() => { const i = document.getElementById('simpleUserInput'); if (i) i.focus(); }, 100);
+}
+function closeAssistant() {
+  document.getElementById('assistantModal').style.display = 'none';
+}
+window.addEventListener('click', function(e) {
+  if (e.target === document.getElementById('assistantModal')) closeAssistant();
+});
+function handleSimpleEnter(e) {
+  if (e.key === 'Enter') sendSimpleMessage();
+}
+function addSimpleMsg(text, cls) {
+  const box = document.getElementById('simpleChatBox');
+  const d = document.createElement('div');
+  d.className = cls;
+  d.textContent = text;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+function sendSimpleMessage() {
+  const inp = document.getElementById('simpleUserInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  addSimpleMsg(text, 'simple-user-msg');
+  inp.value = '';
+  setTimeout(() => {
+    const q = text.toLowerCase();
+    let r = 'Posso ajudar com informações sobre os recursos da Rede Violeta, canais de emergência, casos históricos ou formas de buscar apoio. Sou a Violeta! 💜';
+    if (q.includes('perigo') || q.includes('socorro') || q.includes('amea') || q.includes('agredindo') || q.includes('agress'))
+      r = 'Se você estiver em perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 também oferece orientação e informações sobre a rede de atendimento.';
+    else if (q.includes('180') || q.includes('denúncia') || q.includes('denuncia') || q.includes('orienta'))
+      r = 'O Ligue 180 é a Central de Atendimento à Mulher. O serviço é gratuito e funciona 24 horas. Ele oferece orientação sobre direitos e serviços da rede de atendimento.';
+    else if (q.includes('delegacia') || q.includes('deam'))
+      r = 'A DEAM é a Delegacia Especializada de Atendimento à Mulher. Ela integra a rede de atendimento especializado. Use a aba Recursos para encontrar mais informações.';
+    else if (q.includes('violênci') || q.includes('violenc'))
+      r = 'Violência contra a mulher pode assumir diferentes formas: física, psicológica, sexual, patrimonial e moral. Se você estiver vivendo isso, procure uma pessoa de confiança ou um serviço especializado.';
+    else if (q.includes('medo') || q.includes('sozinha') || q.includes('triste') || q.includes('ansio'))
+      r = 'Sinto muito que você esteja passando por isso. Você merece ser ouvida e respeitada. Se for seguro, converse com alguém de confiança. Em uma emergência, ligue 190.';
+    else if (q.includes('caso') || q.includes('angela') || q.includes('ângela') || q.includes('daniella') || q.includes('eloá') || q.includes('eloa') || q.includes('eliza') || q.includes('mércia') || q.includes('mercia'))
+      r = 'Na aba “Conheça os Casos”, a Rede Violeta apresenta casos históricos de forma educativa: Ângela Diniz, Daniella Perez, Eloá Pimentel, Eliza Samudio e Mércia Nakashima.';
+    else if (q.includes('lei') || q.includes('maria da penha') || q.includes('direito'))
+      r = 'O Brasil possui legislação específica de proteção às mulheres, incluindo a Lei Maria da Penha. Para orientação jurídica, procure a Defensoria Pública ou serviço jurídico especializado.';
+    else if (q.includes('site') || q.includes('rede violeta') || q.includes('projeto'))
+      r = 'A Rede Violeta é um projeto acadêmico da Faculdade Cruzeiro do Sul. O objetivo é reunir informação, conscientização e caminhos de apoio relacionados à violência contra a mulher.';
+    addSimpleMsg(r, 'simple-bot-msg');
+  }, 450);
+}
+</script>
+
+</body>
+</html>
