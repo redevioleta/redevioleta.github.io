@@ -28,7 +28,7 @@ jobs:
           cp app.js _site/
           cp style.css _site/
           cp -r img _site/
-          echo "rede-violeta.com" > _site/CNAME
+          echo "rede-violeta.com.br" > _site/CNAME
 
       - uses: actions/upload-pages-artifact@v3
         with:
