@@ -324,33 +324,40 @@ function _paintFeed(lista) {
     </div>`).join('');
 }
 
-async function renderFeed() {
-  let lista = loadAlertas().sort((a, b) => b.ts - a.ts);
+function _mapBackendAlerta(a) {
+  const loc = a.localizacao || '';
+  const dashIdx = loc.indexOf('—');
+  const cidadeUf = dashIdx >= 0 ? loc.slice(0, dashIdx).trim() : loc;
+  const local    = dashIdx >= 0 ? loc.slice(dashIdx + 1).trim() : '';
+  const commaIdx = cidadeUf.lastIndexOf(',');
+  const cidade   = commaIdx >= 0 ? cidadeUf.slice(0, commaIdx).trim() : cidadeUf;
+  const uf       = commaIdx >= 0 ? cidadeUf.slice(commaIdx + 1).trim().substring(0, 2) : '—';
+  return {
+    id: 'be_' + a.id, tipo: a.titulo,
+    cidade, uf, local, desc: a.descricao,
+    urgencia: a.urgencia || 'media',
+    ts: new Date(a.criado_em).getTime(),
+    confirmacoes: a.confirmacoes || 0,
+  };
+}
 
-  _paintFeed(lista); // renderiza imediatamente sem esperar o backend
+async function renderFeed() {
+  const feed = document.getElementById('alertaFeed');
+  if (feed) feed.innerHTML = '<p style="text-align:center;padding:2rem;color:#888"><i class="fa-solid fa-spinner fa-spin"></i> Carregando alertas da rede...</p>';
 
   const backendData = await apiFetch('/alertas/');
+
   if (backendData?.length) {
-    const backendAlertas = backendData
-      .filter(a => !lista.some(l => l.desc === a.descricao))
-      .map(a => {
-        const loc = a.localizacao || '';
-        const dashIdx = loc.indexOf('—');
-        const cidadeUf = dashIdx >= 0 ? loc.slice(0, dashIdx).trim() : loc;
-        const local    = dashIdx >= 0 ? loc.slice(dashIdx + 1).trim() : '';
-        const commaIdx = cidadeUf.lastIndexOf(',');
-        const cidade   = commaIdx >= 0 ? cidadeUf.slice(0, commaIdx).trim() : cidadeUf;
-        const uf       = commaIdx >= 0 ? cidadeUf.slice(commaIdx + 1).trim().substring(0, 2) : '—';
-        return {
-          id: 'be_' + a.id, tipo: a.titulo,
-          cidade, uf, local, desc: a.descricao,
-          urgencia: 'media', ts: new Date(a.criado_em).getTime(), confirmacoes: 0,
-        };
-      });
-    if (backendAlertas.length) {
-      lista = [...backendAlertas, ...lista].sort((a, b) => b.ts - a.ts);
-      _paintFeed(lista);
-    }
+    // Dados da API são a fonte principal
+    const backendAlertas = backendData.map(_mapBackendAlerta);
+    // Inclui alertas criados localmente que ainda não estão na API
+    const localOnly = loadAlertas().filter(a =>
+      typeof a.id !== 'number' || !backendAlertas.some(b => b.desc === a.desc)
+    );
+    _paintFeed([...backendAlertas, ...localOnly].sort((a, b) => b.ts - a.ts));
+  } else {
+    // Fallback: dados locais/seed quando a API não está disponível
+    _paintFeed(loadAlertas().sort((a, b) => b.ts - a.ts));
   }
 }
 
@@ -364,10 +371,16 @@ function filtrarAlertas(filtro) {
   renderFeed();
 }
 
-function confirmarAlerta(id) {
-  const lista = loadAlertas();
-  const a = lista.find(x => x.id === id);
-  if (a) { a.confirmacoes++; saveAlertas(lista); renderFeed(); }
+async function confirmarAlerta(id) {
+  if (typeof id === 'string' && id.startsWith('be_')) {
+    const numId = parseInt(id.replace('be_', ''));
+    await apiFetch(`/alertas/${numId}/confirmar`, { method: 'PATCH' });
+  } else {
+    const lista = loadAlertas();
+    const a = lista.find(x => x.id === id);
+    if (a) { a.confirmacoes++; saveAlertas(lista); }
+  }
+  renderFeed();
 }
 
 async function criarAlerta(e) {
@@ -387,7 +400,7 @@ async function criarAlerta(e) {
   apiFetch('/alertas/', {
     method: 'POST',
     body: JSON.stringify({
-      titulo: tipo, descricao: desc,
+      titulo: tipo, descricao: desc, urgencia,
       localizacao: `${cidade}, ${uf}${local ? ' — ' + local : ''}`,
     }),
   });

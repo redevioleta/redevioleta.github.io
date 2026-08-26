@@ -76,4 +76,6 @@ class AlertaComunitario(Base):
     localizacao = Column(String, nullable=True)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    urgencia = Column(String, default="media")  # alta, media, baixa
+    confirmacoes = Column(Integer, default=0)
     criado_em = Column(DateTime(timezone=True), server_default=func.now())

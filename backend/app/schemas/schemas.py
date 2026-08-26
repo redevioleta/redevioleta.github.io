@@ -102,9 +102,11 @@ class AlertaComunitarioCreate(BaseModel):
     localizacao: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    urgencia: Optional[str] = "media"
 
 class AlertaComunitarioOut(AlertaComunitarioCreate):
     id: int
+    confirmacoes: int = 0
     criado_em: datetime
 
     class Config:
