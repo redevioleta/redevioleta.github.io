@@ -2,7 +2,11 @@
 const TAB_MAP = { desabafo: 0, identificar: 1, quiz: 2, recursos: 3, faq: 4, alertas: 5 };
 
 /* ── Backend ── */
-const API_BASE = '/api/v1';
+const API_BASE = window.REDE_VIOLETA_API_BASE || (
+  window.location.hostname === 'redevioleta.github.io'
+    ? 'https://rede-violeta.onrender.com/api/v1'
+    : '/api/v1'
+);
 
 async function apiFetch(path, options = {}) {
   try {
@@ -29,7 +33,10 @@ function switchTab(tab) {
     btns[idx].classList.add('active');
     btns[idx].setAttribute('aria-selected', 'true');
   }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({
+    top: 0,
+    behavior: document.body.classList.contains('a11y-reduce-motion') ? 'auto' : 'smooth',
+  });
   if (tab === 'identificar' && !mapInitialized) setTimeout(initMap, 120);
   if (tab === 'identificar') initTimeline();
   if (tab === 'recursos')    initRecursos();

@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     app_name: str = "Fala Segura API"
     api_v1_prefix: str = "/api/v1"
     database_url: str = f"sqlite:///{_DB}"
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-2.5-flash"
 
     model_config = {
         "env_file": ".env",

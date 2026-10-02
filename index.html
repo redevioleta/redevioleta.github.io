@@ -10,6 +10,48 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
+<a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
+<button class="a11y-fab" id="a11yToggle" type="button" aria-label="Abrir opções de acessibilidade" aria-controls="a11yPanel" aria-expanded="false" title="Acessibilidade">
+  <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
+</button>
+<section class="a11y-panel" id="a11yPanel" aria-label="Opções de acessibilidade" hidden>
+  <h2>
+    Acessibilidade
+    <button class="a11y-close" id="a11yClose" type="button" aria-label="Fechar opções de acessibilidade">&times;</button>
+  </h2>
+  <p class="a11y-sub">Personalize a leitura e a navegação. As opções ficam salvas neste dispositivo.</p>
+  <div class="a11y-option">
+    <span class="a11y-label" id="a11yFontLabel">Tamanho do texto</span>
+    <div class="a11y-font-controls">
+      <button id="a11yFontDown" type="button" aria-label="Diminuir tamanho do texto">A−</button>
+      <button id="a11yFontUp" type="button" aria-label="Aumentar tamanho do texto">A+</button>
+    </div>
+  </div>
+  <label class="a11y-option" for="a11yContrast">
+    <span class="a11y-label">Alto contraste</span>
+    <span class="a11y-switch">
+      <input id="a11yContrast" type="checkbox" aria-label="Ativar alto contraste">
+      <span class="a11y-track" aria-hidden="true"></span>
+      <span class="a11y-thumb" aria-hidden="true"></span>
+    </span>
+  </label>
+  <label class="a11y-option" for="a11yMotion">
+    <span class="a11y-label">Reduzir animações</span>
+    <span class="a11y-switch">
+      <input id="a11yMotion" type="checkbox" aria-label="Reduzir animações">
+      <span class="a11y-track" aria-hidden="true"></span>
+      <span class="a11y-thumb" aria-hidden="true"></span>
+    </span>
+  </label>
+  <label class="a11y-option" for="a11yFocus">
+    <span class="a11y-label">Destacar foco do teclado</span>
+    <span class="a11y-switch">
+      <input id="a11yFocus" type="checkbox" aria-label="Destacar foco do teclado">
+      <span class="a11y-track" aria-hidden="true"></span>
+      <span class="a11y-thumb" aria-hidden="true"></span>
+    </span>
+  </label>
+</section>
 
 <!-- ─── Banner Campanha ─── -->
 <div class="campaign-banner">
@@ -88,6 +130,9 @@
         por situações de violência.
       </p>
       <div class="hero-buttons">
+        <button type="button" class="btn-violeta-hero" onclick="openAssistant()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Pergunte à Violeta
+        </button>
         <a href="#" class="btn-emergency-hero" onclick="switchTab('recursos'); document.querySelector('.tab-nav').scrollIntoView({behavior:'smooth'}); return false;">
           🚨 Preciso de ajuda
         </a>
@@ -109,7 +154,7 @@
 </div>
 
 <!-- ───────── Tabs ───────── -->
-<nav class="tab-nav" role="tablist">
+<nav class="tab-nav" role="tablist" aria-label="Seções do site">
   <button class="tab-btn active" onclick="switchTab('desabafo')" role="tab" aria-selected="true">
     <i class="fa-solid fa-comments"></i> Desabafo
   </button>
@@ -131,7 +176,7 @@
 </nav>
 
 <!-- ───────── Main ───────── -->
-<main>
+<main id="conteudo-principal" tabindex="-1">
 
   <!-- ══════ ABA 1 — DESABAFO ══════ -->
   <section id="tab-desabafo" class="tab-pane active">
@@ -854,7 +899,7 @@
 <script src="app.js"></script>
 
 <!-- Assistente Virtual — Violeta -->
-<div class="simple-modal" id="assistantModal">
+<div class="simple-modal" id="assistantModal" role="dialog" aria-modal="true" aria-labelledby="violetaTitle">
   <div class="simple-chat-window">
     <button class="simple-chat-close" onclick="closeAssistant()" aria-label="Fechar">&times;</button>
     <div class="simple-chat-header">
@@ -862,20 +907,26 @@
         <img src="https://api.dicebear.com/8.x/lorelei/svg?seed=violeta&amp;backgroundColor=eadcf3" alt="" class="violeta-avatar-img">
       </div>
       <div class="violeta-header-info">
-        <h2>Violeta</h2>
-        <p>Assistente da Rede Violeta &middot; Online 💜</p>
+        <h2 id="violetaTitle">Violeta</h2>
+        <p>Guia da Rede Violeta 💜</p>
       </div>
     </div>
-    <div class="simple-chat-box" id="simpleChatBox">
-      <div class="simple-bot-msg">Olá! 💜 Sou a <strong>Violeta</strong>, assistente da Rede Violeta.
+    <div class="simple-chat-box" id="simpleChatBox" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="simple-bot-msg">Olá! 💜 Sou a <strong>Violeta</strong>, assistente com IA da Rede Violeta.
 
-Posso ajudar você a encontrar informações sobre os canais de emergência, explicar os recursos do site ou conversar sobre situações de violência.
+Posso conversar sobre o conteúdo do site e ajudar você a encontrar a seção certa. Escolha um atalho ou escreva o que procura.
 
-Se houver perigo imediato, procure um local seguro e ligue 190.</div>
+Suas mensagens são enviadas ao Google Gemini para gerar respostas. Não compartilhe dados pessoais; esta conversa não substitui atendimento profissional. Se houver perigo imediato, ligue 190.</div>
+    </div>
+    <div class="assistant-suggestions" aria-label="Atalhos da Violeta">
+      <button type="button" onclick="sendAssistantPrompt('Quero abrir Recursos &amp; Apoio')">Preciso de apoio</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero desabafar')">Quero desabafar</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero fazer o quiz')">Fazer o quiz</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero conhecer os casos')">Conhecer os casos</button>
     </div>
     <div class="simple-chat-input">
-      <input type="text" id="simpleUserInput" placeholder="Fale com a Violeta..." onkeydown="handleSimpleEnter(event)" aria-label="Mensagem para Violeta">
-      <button onclick="sendSimpleMessage()">Enviar</button>
+      <input type="text" id="simpleUserInput" placeholder="Fale com a Violeta..." onkeydown="handleSimpleEnter(event)" aria-label="Mensagem para Violeta" maxlength="2000">
+      <button type="button" onclick="sendSimpleMessage()">Enviar</button>
     </div>
   </div>
 </div>
@@ -914,55 +965,249 @@ setInterval(() => {
   if (el) el.textContent = '\u201c' + comfortMessages[comfortIdx] + '\u201d';
 }, 6500);
 
-/* ── Chat simples ── */
+/* ── Acessibilidade ── */
+const a11yStorageKey = 'rede-violeta-accessibility';
+const a11yDefaults = { fontSize: 16, highContrast: false, reduceMotion: false, strongFocus: false };
+let a11ySettings = { ...a11yDefaults };
+
+function saveA11ySettings() {
+  try {
+    localStorage.setItem(a11yStorageKey, JSON.stringify(a11ySettings));
+  } catch {}
+}
+
+function applyA11ySettings() {
+  document.documentElement.style.fontSize = `${a11ySettings.fontSize}px`;
+  document.body.classList.toggle('a11y-high-contrast', a11ySettings.highContrast);
+  document.body.classList.toggle('a11y-reduce-motion', a11ySettings.reduceMotion);
+  document.body.classList.toggle('a11y-strong-focus', a11ySettings.strongFocus);
+  document.getElementById('a11yContrast').checked = a11ySettings.highContrast;
+  document.getElementById('a11yMotion').checked = a11ySettings.reduceMotion;
+  document.getElementById('a11yFocus').checked = a11ySettings.strongFocus;
+}
+
+function changeFontSize(amount) {
+  a11ySettings.fontSize = Math.max(14, Math.min(24, a11ySettings.fontSize + amount));
+  applyA11ySettings();
+  saveA11ySettings();
+}
+
+function toggleA11yPanel(forceOpen, restoreFocus = true) {
+  const panel = document.getElementById('a11yPanel');
+  const button = document.getElementById('a11yToggle');
+  const open = forceOpen ?? panel.hidden;
+  panel.hidden = !open;
+  panel.classList.toggle('open', open);
+  button.setAttribute('aria-expanded', String(open));
+  if (open) document.getElementById('a11yClose').focus();
+  else if (restoreFocus) button.focus();
+}
+
+try {
+  const savedA11ySettings = JSON.parse(localStorage.getItem(a11yStorageKey));
+  if (savedA11ySettings && typeof savedA11ySettings === 'object') {
+    const fontSize = Number(savedA11ySettings.fontSize);
+    a11ySettings = {
+      fontSize: Number.isFinite(fontSize) ? Math.max(14, Math.min(24, fontSize)) : a11yDefaults.fontSize,
+      highContrast: savedA11ySettings.highContrast === true,
+      reduceMotion: savedA11ySettings.reduceMotion === true,
+      strongFocus: savedA11ySettings.strongFocus === true
+    };
+  }
+} catch {}
+
+applyA11ySettings();
+document.getElementById('a11yToggle').addEventListener('click', () => toggleA11yPanel());
+document.getElementById('a11yClose').addEventListener('click', () => toggleA11yPanel(false));
+document.getElementById('a11yFontDown').addEventListener('click', () => changeFontSize(-2));
+document.getElementById('a11yFontUp').addEventListener('click', () => changeFontSize(2));
+document.getElementById('a11yContrast').addEventListener('change', event => {
+  a11ySettings.highContrast = event.target.checked;
+  applyA11ySettings();
+  saveA11ySettings();
+});
+document.getElementById('a11yMotion').addEventListener('change', event => {
+  a11ySettings.reduceMotion = event.target.checked;
+  applyA11ySettings();
+  saveA11ySettings();
+});
+document.getElementById('a11yFocus').addEventListener('change', event => {
+  a11ySettings.strongFocus = event.target.checked;
+  applyA11ySettings();
+  saveA11ySettings();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !document.getElementById('a11yPanel').hidden) toggleA11yPanel(false);
+});
+document.addEventListener('click', event => {
+  const panel = document.getElementById('a11yPanel');
+  if (!panel.hidden && !panel.contains(event.target) && event.target !== document.getElementById('a11yToggle')) {
+    toggleA11yPanel(false, false);
+  }
+});
+
+/* ── Guia da Violeta ── */
+let assistantReturnFocus = null;
+
 function openAssistant() {
+  assistantReturnFocus = document.activeElement;
   document.getElementById('assistantModal').style.display = 'block';
   setTimeout(() => { const i = document.getElementById('simpleUserInput'); if (i) i.focus(); }, 100);
 }
 function closeAssistant() {
   document.getElementById('assistantModal').style.display = 'none';
+  if (assistantReturnFocus && typeof assistantReturnFocus.focus === 'function') assistantReturnFocus.focus();
 }
 window.addEventListener('click', function(e) {
   if (e.target === document.getElementById('assistantModal')) closeAssistant();
 });
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('assistantModal').style.display === 'block') closeAssistant();
+});
 function handleSimpleEnter(e) {
   if (e.key === 'Enter') sendSimpleMessage();
 }
-function addSimpleMsg(text, cls) {
+function addSimpleMsg(text, cls, action) {
   const box = document.getElementById('simpleChatBox');
   const d = document.createElement('div');
   d.className = cls;
   d.textContent = text;
+  if (action) {
+    const control = action.href ? document.createElement('a') : document.createElement('button');
+    control.className = 'assistant-action';
+    control.textContent = action.label;
+    if (action.href) {
+      control.href = action.href;
+    } else {
+      control.type = 'button';
+      control.addEventListener('click', action.run);
+    }
+    d.appendChild(control);
+  }
   box.appendChild(d);
   box.scrollTop = box.scrollHeight;
 }
-function sendSimpleMessage() {
+
+function sendAssistantPrompt(text) {
+  document.getElementById('simpleUserInput').value = text;
+  sendSimpleMessage();
+}
+
+const assistantIntents = [
+  {
+    tab: 'recursos',
+    keywords: ['recurso', 'apoio', 'ajuda', 'delegacia', 'deam', 'denuncia', 'denunciar', 'telefone', 'canal'],
+    label: 'Abrir Recursos & Apoio'
+  },
+  {
+    tab: 'desabafo',
+    keywords: ['desabafo', 'desabafar', 'escrever o que sinto'],
+    label: 'Abrir espaço de desabafo'
+  },
+  {
+    tab: 'quiz',
+    keywords: ['quiz', 'meu caso', 'avaliar', 'identificar uma situacao', 'identificar situacao'],
+    label: 'Abrir Meu Caso'
+  },
+  {
+    tab: 'identificar',
+    keywords: ['caso', 'angela diniz', 'daniella perez', 'eloa', 'eliza samudio', 'mercia nakashima'],
+    label: 'Conhecer os casos'
+  },
+  {
+    tab: 'faq',
+    keywords: ['faq', 'pergunta frequente', 'duvida', 'duvidas'],
+    label: 'Abrir perguntas frequentes'
+  },
+  {
+    tab: 'alertas',
+    keywords: ['alerta', 'mapa', 'ocorrencia', 'ocorrencias'],
+    label: 'Abrir Alertas'
+  }
+];
+
+const assistantHistory = [];
+let assistantBusy = false;
+
+function navigateFromAssistant(tab) {
+  closeAssistant();
+  switchTab(tab);
+  const target = tab === 'desabafo' ? document.getElementById('desabafoText') : document.getElementById('tab-' + tab);
+  if (target) {
+    if (target.tabIndex < 0) target.tabIndex = -1;
+    setTimeout(() => target.focus({ preventScroll: true }), 350);
+  }
+}
+
+async function sendSimpleMessage() {
+  if (assistantBusy) return;
   const inp = document.getElementById('simpleUserInput');
   const text = inp.value.trim();
   if (!text) return;
   addSimpleMsg(text, 'simple-user-msg');
   inp.value = '';
-  setTimeout(() => {
-    const q = text.toLowerCase();
-    let r = 'Posso ajudar com informações sobre os recursos da Rede Violeta, canais de emergência, casos históricos ou formas de buscar apoio. Sou a Violeta! 💜';
-    if (q.includes('perigo') || q.includes('socorro') || q.includes('amea') || q.includes('agredindo') || q.includes('agress'))
-      r = 'Se você estiver em perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 também oferece orientação e informações sobre a rede de atendimento.';
-    else if (q.includes('180') || q.includes('denúncia') || q.includes('denuncia') || q.includes('orienta'))
-      r = 'O Ligue 180 é a Central de Atendimento à Mulher. O serviço é gratuito e funciona 24 horas. Ele oferece orientação sobre direitos e serviços da rede de atendimento.';
-    else if (q.includes('delegacia') || q.includes('deam'))
-      r = 'A DEAM é a Delegacia Especializada de Atendimento à Mulher. Ela integra a rede de atendimento especializado. Use a aba Recursos para encontrar mais informações.';
-    else if (q.includes('violênci') || q.includes('violenc'))
-      r = 'Violência contra a mulher pode assumir diferentes formas: física, psicológica, sexual, patrimonial e moral. Se você estiver vivendo isso, procure uma pessoa de confiança ou um serviço especializado.';
-    else if (q.includes('medo') || q.includes('sozinha') || q.includes('triste') || q.includes('ansio'))
-      r = 'Sinto muito que você esteja passando por isso. Você merece ser ouvida e respeitada. Se for seguro, converse com alguém de confiança. Em uma emergência, ligue 190.';
-    else if (q.includes('caso') || q.includes('angela') || q.includes('ângela') || q.includes('daniella') || q.includes('eloá') || q.includes('eloa') || q.includes('eliza') || q.includes('mércia') || q.includes('mercia'))
-      r = 'Na aba “Conheça os Casos”, a Rede Violeta apresenta casos históricos de forma educativa: Ângela Diniz, Daniella Perez, Eloá Pimentel, Eliza Samudio e Mércia Nakashima.';
-    else if (q.includes('lei') || q.includes('maria da penha') || q.includes('direito'))
-      r = 'O Brasil possui legislação específica de proteção às mulheres, incluindo a Lei Maria da Penha. Para orientação jurídica, procure a Defensoria Pública ou serviço jurídico especializado.';
-    else if (q.includes('site') || q.includes('rede violeta') || q.includes('projeto'))
-      r = 'A Rede Violeta é um projeto acadêmico da Faculdade Cruzeiro do Sul. O objetivo é reunir informação, conscientização e caminhos de apoio relacionados à violência contra a mulher.';
-    addSimpleMsg(r, 'simple-bot-msg');
-  }, 450);
+  const q = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const urgent = ['perigo imediato', 'estou em perigo', 'estou em risco', 'socorro', 'agred', 'agress', 'ameac', 'me bate']
+    .some(term => q.includes(term));
+  if (urgent) {
+    addSimpleMsg('Se houver perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 oferece orientação e informações sobre serviços de atendimento.', 'simple-bot-msg', { label: 'Ligar para 190', href: 'tel:190' });
+    return;
+  }
+
+  const intent = assistantIntents.find(item => item.keywords.some(term => q.includes(term)));
+  const directNavigation = /(abrir|abre|ir para|ir pra|quero (ver|acessar|abrir|ir|fazer|desabafar|conhecer)|me leva|mostra|comecar|iniciar)/.test(q);
+  assistantBusy = true;
+  inp.disabled = true;
+  const sendButton = document.querySelector('.simple-chat-input button');
+  if (sendButton) sendButton.disabled = true;
+  assistantHistory.push({ role: 'user', text });
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+    const messages = assistantHistory.slice(-12);
+    if (messages[0]?.role === 'model') messages.shift();
+    let response;
+    try {
+      response = await fetch(`${API_BASE}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages }),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Não foi possível conectar ao Gemini.');
+    const reply = typeof data.reply === 'string' ? data.reply.trim() : '';
+    if (!reply) throw new Error('A Violeta não recebeu uma resposta válida. Tente novamente.');
+
+    assistantHistory.push({ role: 'model', text: reply });
+    if (assistantHistory.length > 12) assistantHistory.splice(0, assistantHistory.length - 12);
+    const action = intent ? {
+      label: intent.label,
+      run: () => navigateFromAssistant(intent.tab)
+    } : null;
+    addSimpleMsg(reply, 'simple-bot-msg', action);
+    if (intent && directNavigation) navigateFromAssistant(intent.tab);
+  } catch (error) {
+    assistantHistory.pop();
+    const message = error.name === 'AbortError'
+      ? 'A resposta demorou demais. Tente novamente. Se houver perigo imediato, ligue 190.'
+      : `${error.message} Se houver perigo imediato, ligue 190.`;
+    const action = intent ? {
+      label: intent.label,
+      run: () => navigateFromAssistant(intent.tab)
+    } : null;
+    addSimpleMsg(message, 'simple-bot-msg', action);
+    if (intent && directNavigation) navigateFromAssistant(intent.tab);
+  } finally {
+    assistantBusy = false;
+    inp.disabled = false;
+    if (sendButton) sendButton.disabled = false;
+    inp.focus();
+  }
 }
 </script>
 

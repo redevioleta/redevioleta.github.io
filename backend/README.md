@@ -36,6 +36,28 @@ uvicorn app.main:app --reload
 A API sobe em `http://localhost:8000`. A documentação interativa
 (Swagger) fica automaticamente em `http://localhost:8000/docs`.
 
+## Assistente com Gemini
+
+O chat usa a API do Gemini pelo backend; a chave nunca deve ser colocada no
+HTML ou no JavaScript público. Configure `GEMINI_API_KEY` nas variáveis de
+ambiente do serviço que executa o backend (por exemplo, em **Environment** no
+Render). O blueprint em `render.yaml` solicita essa chave como um segredo ao
+configurar o serviço. Opcionalmente, altere `GEMINI_MODEL` para escolher outro
+modelo disponível na sua conta; o padrão é `gemini-2.5-flash`.
+
+O endpoint `/health` informa `gemini_configured: true` quando a chave está
+disponível no processo do backend; ele nunca retorna a chave.
+
+O frontend no GitHub Pages usa por padrão
+`https://rede-violeta.onrender.com/api/v1`, correspondente ao serviço declarado
+em `render.yaml`. Se o backend estiver em outro endereço, defina
+`window.REDE_VIOLETA_API_BASE` antes de carregar `app.js` com a URL base da API
+terminando em `/api/v1`.
+
+O chat mantém o histórico apenas na memória da página e envia as mensagens à
+Google para gerar as respostas. Não compartilhe dados pessoais ou informações
+que possam identificar alguém.
+
 ## Sobre o banco de dados
 Por padrão o projeto está configurado para usar **SQLite local**
 (`fala_segura.db`), só para você já poder rodar e testar a API sem

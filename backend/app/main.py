@@ -22,6 +22,10 @@ app.include_router(api_router, prefix=settings.api_v1_prefix)
 
 @app.get("/health", include_in_schema=False)
 def healthcheck():
-    return {"status": "ok", "projeto": "Fala Segura API"}
+    return {
+        "status": "ok",
+        "projeto": "Fala Segura API",
+        "gemini_configured": bool(settings.gemini_api_key),
+    }
 
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

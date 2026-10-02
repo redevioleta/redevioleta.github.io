@@ -986,6 +986,23 @@ footer i            { color: #c084fc; }
   line-height: 1.65;
 }
 .hero-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn-violeta-hero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--purple);
+  border-radius: 8px;
+  background: var(--purple);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .25s;
+}
+.btn-violeta-hero:hover { background: var(--purple-dark); border-color: var(--purple-dark); transform: translateY(-2px); }
+.btn-violeta-hero:focus-visible { outline: 3px solid var(--purple-dark); outline-offset: 3px; }
 .btn-emergency-hero {
   display: inline-flex;
   align-items: center;
@@ -1203,6 +1220,26 @@ footer i            { color: #c084fc; }
   border: 1px solid var(--border);
   border-radius: 12px;
 }
+.assistant-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 12px;
+}
+.assistant-suggestions button {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--lilac-very-light);
+  color: var(--purple-dark);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.assistant-suggestions button:hover { background: var(--lilac-light); }
+.assistant-suggestions button:focus-visible,
+.assistant-action:focus-visible { outline: 2px solid var(--purple-dark); outline-offset: 2px; }
 .simple-bot-msg, .simple-user-msg {
   padding: 10px 13px;
   border-radius: 10px;
@@ -1214,6 +1251,22 @@ footer i            { color: #c084fc; }
 }
 .simple-bot-msg  { background: var(--lilac-light); color: var(--text); }
 .simple-user-msg { margin-left: auto; background: var(--purple); color: white; }
+.assistant-action {
+  display: block;
+  width: fit-content;
+  margin-top: 9px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--purple);
+  color: #fff;
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.assistant-action:hover { background: var(--purple-dark); }
 .simple-typing {
   display: flex;
   align-items: center;
@@ -1370,6 +1423,19 @@ footer .ft-ribbon {
 /* ══════════════════════════════════════════════
    Acessibilidade
    ══════════════════════════════════════════════ */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 12px;
+  z-index: 10060;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--purple-dark);
+  font-weight: 800;
+}
+.skip-link:focus { top: 12px; outline: 3px solid var(--purple-dark); outline-offset: 2px; }
+
 .a11y-fab {
   position: fixed;
   top: 14px;
@@ -1409,6 +1475,7 @@ footer .ft-ribbon {
   overflow-y: auto;
 }
 .a11y-panel.open { display: block; }
+.a11y-panel[hidden] { display: none; }
 .a11y-panel h2 {
   font-size: 1rem;
   color: var(--purple-dark);
@@ -1440,8 +1507,8 @@ footer .ft-ribbon {
 .a11y-option span.a11y-label { font-size: .86rem; font-weight: 600; color: var(--text); }
 .a11y-font-controls { display: flex; align-items: center; gap: 8px; }
 .a11y-font-controls button {
-  width: 30px;
-  height: 30px;
+  min-width: 40px;
+  min-height: 40px;
   border-radius: 8px;
   border: 1.5px solid var(--border);
   background: var(--bg);
