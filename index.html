@@ -88,6 +88,9 @@
         por situações de violência.
       </p>
       <div class="hero-buttons">
+        <button type="button" class="btn-violeta-hero" onclick="openAssistant()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Pergunte à Violeta
+        </button>
         <a href="#" class="btn-emergency-hero" onclick="switchTab('recursos'); document.querySelector('.tab-nav').scrollIntoView({behavior:'smooth'}); return false;">
           🚨 Preciso de ajuda
         </a>
@@ -854,7 +857,7 @@
 <script src="app.js"></script>
 
 <!-- Assistente Virtual — Violeta -->
-<div class="simple-modal" id="assistantModal">
+<div class="simple-modal" id="assistantModal" role="dialog" aria-modal="true" aria-labelledby="violetaTitle">
   <div class="simple-chat-window">
     <button class="simple-chat-close" onclick="closeAssistant()" aria-label="Fechar">&times;</button>
     <div class="simple-chat-header">
@@ -862,20 +865,26 @@
         <img src="https://api.dicebear.com/8.x/lorelei/svg?seed=violeta&amp;backgroundColor=eadcf3" alt="" class="violeta-avatar-img">
       </div>
       <div class="violeta-header-info">
-        <h2>Violeta</h2>
-        <p>Assistente da Rede Violeta &middot; Online 💜</p>
+        <h2 id="violetaTitle">Violeta</h2>
+        <p>Guia da Rede Violeta 💜</p>
       </div>
     </div>
-    <div class="simple-chat-box" id="simpleChatBox">
-      <div class="simple-bot-msg">Olá! 💜 Sou a <strong>Violeta</strong>, assistente da Rede Violeta.
+    <div class="simple-chat-box" id="simpleChatBox" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="simple-bot-msg">Olá! 💜 Sou a <strong>Violeta</strong>, guia da Rede Violeta.
 
-Posso ajudar você a encontrar informações sobre os canais de emergência, explicar os recursos do site ou conversar sobre situações de violência.
+Posso explicar informações do site e levar você diretamente à seção certa. Escolha um atalho ou escreva o que procura.
 
-Se houver perigo imediato, procure um local seguro e ligue 190.</div>
+Minhas respostas automáticas se limitam ao conteúdo do site. Não compartilhe dados pessoais por aqui; não substituo atendimento profissional. Se houver perigo imediato, ligue 190.</div>
+    </div>
+    <div class="assistant-suggestions" aria-label="Atalhos da Violeta">
+      <button type="button" onclick="sendAssistantPrompt('Quero abrir Recursos &amp; Apoio')">Preciso de apoio</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero desabafar')">Quero desabafar</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero fazer o quiz')">Fazer o quiz</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero conhecer os casos')">Conhecer os casos</button>
     </div>
     <div class="simple-chat-input">
       <input type="text" id="simpleUserInput" placeholder="Fale com a Violeta..." onkeydown="handleSimpleEnter(event)" aria-label="Mensagem para Violeta">
-      <button onclick="sendSimpleMessage()">Enviar</button>
+      <button type="button" onclick="sendSimpleMessage()">Enviar</button>
     </div>
   </div>
 </div>
@@ -914,28 +923,102 @@ setInterval(() => {
   if (el) el.textContent = '\u201c' + comfortMessages[comfortIdx] + '\u201d';
 }, 6500);
 
-/* ── Chat simples ── */
+/* ── Guia da Violeta ── */
+let assistantReturnFocus = null;
+
 function openAssistant() {
+  assistantReturnFocus = document.activeElement;
   document.getElementById('assistantModal').style.display = 'block';
   setTimeout(() => { const i = document.getElementById('simpleUserInput'); if (i) i.focus(); }, 100);
 }
 function closeAssistant() {
   document.getElementById('assistantModal').style.display = 'none';
+  if (assistantReturnFocus && typeof assistantReturnFocus.focus === 'function') assistantReturnFocus.focus();
 }
 window.addEventListener('click', function(e) {
   if (e.target === document.getElementById('assistantModal')) closeAssistant();
 });
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('assistantModal').style.display === 'block') closeAssistant();
+});
 function handleSimpleEnter(e) {
   if (e.key === 'Enter') sendSimpleMessage();
 }
-function addSimpleMsg(text, cls) {
+function addSimpleMsg(text, cls, action) {
   const box = document.getElementById('simpleChatBox');
   const d = document.createElement('div');
   d.className = cls;
   d.textContent = text;
+  if (action) {
+    const control = action.href ? document.createElement('a') : document.createElement('button');
+    control.className = 'assistant-action';
+    control.textContent = action.label;
+    if (action.href) {
+      control.href = action.href;
+    } else {
+      control.type = 'button';
+      control.addEventListener('click', action.run);
+    }
+    d.appendChild(control);
+  }
   box.appendChild(d);
   box.scrollTop = box.scrollHeight;
 }
+
+function sendAssistantPrompt(text) {
+  document.getElementById('simpleUserInput').value = text;
+  sendSimpleMessage();
+}
+
+const assistantIntents = [
+  {
+    tab: 'recursos',
+    keywords: ['recurso', 'apoio', 'ajuda', 'delegacia', 'deam', 'denuncia', 'denunciar', 'telefone', 'canal'],
+    label: 'Abrir Recursos & Apoio',
+    answer: 'Vou mostrar os canais de apoio, serviços e orientações disponíveis na seção Recursos & Apoio.'
+  },
+  {
+    tab: 'desabafo',
+    keywords: ['desabafo', 'desabafar', 'escrever o que sinto'],
+    label: 'Abrir espaço de desabafo',
+    answer: 'O espaço de desabafo está aqui. Você decide se quer escrever; não inclua dados que identifiquem você ou outra pessoa.'
+  },
+  {
+    tab: 'quiz',
+    keywords: ['quiz', 'meu caso', 'avaliar', 'identificar uma situacao', 'identificar situacao'],
+    label: 'Abrir Meu Caso',
+    answer: 'Vou abrir Meu Caso, um questionário informativo. Ele não é diagnóstico nem substitui orientação profissional.'
+  },
+  {
+    tab: 'identificar',
+    keywords: ['caso', 'angela diniz', 'daniella perez', 'eloa', 'eliza samudio', 'mercia nakashima'],
+    label: 'Conhecer os casos',
+    answer: 'Os casos históricos são apresentados na seção Conheça os Casos, com finalidade educativa.'
+  },
+  {
+    tab: 'faq',
+    keywords: ['faq', 'pergunta frequente', 'duvida', 'duvidas'],
+    label: 'Abrir perguntas frequentes',
+    answer: 'Vou abrir as perguntas frequentes para você consultar as respostas do site.'
+  },
+  {
+    tab: 'alertas',
+    keywords: ['alerta', 'mapa', 'ocorrencia', 'ocorrencias'],
+    label: 'Abrir Alertas',
+    answer: 'Vou abrir a seção de alertas. As informações exibidas ali devem ser verificadas com fontes oficiais.'
+  }
+];
+
+function navigateFromAssistant(tab) {
+  closeAssistant();
+  switchTab(tab);
+  const target = tab === 'desabafo' ? document.getElementById('desabafoText') : document.getElementById('tab-' + tab);
+  if (target) {
+    if (target.tabIndex < 0) target.tabIndex = -1;
+    setTimeout(() => target.focus({ preventScroll: true }), 350);
+  }
+}
+
 function sendSimpleMessage() {
   const inp = document.getElementById('simpleUserInput');
   const text = inp.value.trim();
@@ -943,25 +1026,47 @@ function sendSimpleMessage() {
   addSimpleMsg(text, 'simple-user-msg');
   inp.value = '';
   setTimeout(() => {
-    const q = text.toLowerCase();
-    let r = 'Posso ajudar com informações sobre os recursos da Rede Violeta, canais de emergência, casos históricos ou formas de buscar apoio. Sou a Violeta! 💜';
-    if (q.includes('perigo') || q.includes('socorro') || q.includes('amea') || q.includes('agredindo') || q.includes('agress'))
-      r = 'Se você estiver em perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 também oferece orientação e informações sobre a rede de atendimento.';
-    else if (q.includes('180') || q.includes('denúncia') || q.includes('denuncia') || q.includes('orienta'))
-      r = 'O Ligue 180 é a Central de Atendimento à Mulher. O serviço é gratuito e funciona 24 horas. Ele oferece orientação sobre direitos e serviços da rede de atendimento.';
-    else if (q.includes('delegacia') || q.includes('deam'))
-      r = 'A DEAM é a Delegacia Especializada de Atendimento à Mulher. Ela integra a rede de atendimento especializado. Use a aba Recursos para encontrar mais informações.';
-    else if (q.includes('violênci') || q.includes('violenc'))
-      r = 'Violência contra a mulher pode assumir diferentes formas: física, psicológica, sexual, patrimonial e moral. Se você estiver vivendo isso, procure uma pessoa de confiança ou um serviço especializado.';
-    else if (q.includes('medo') || q.includes('sozinha') || q.includes('triste') || q.includes('ansio'))
-      r = 'Sinto muito que você esteja passando por isso. Você merece ser ouvida e respeitada. Se for seguro, converse com alguém de confiança. Em uma emergência, ligue 190.';
-    else if (q.includes('caso') || q.includes('angela') || q.includes('ângela') || q.includes('daniella') || q.includes('eloá') || q.includes('eloa') || q.includes('eliza') || q.includes('mércia') || q.includes('mercia'))
-      r = 'Na aba “Conheça os Casos”, a Rede Violeta apresenta casos históricos de forma educativa: Ângela Diniz, Daniella Perez, Eloá Pimentel, Eliza Samudio e Mércia Nakashima.';
-    else if (q.includes('lei') || q.includes('maria da penha') || q.includes('direito'))
-      r = 'O Brasil possui legislação específica de proteção às mulheres, incluindo a Lei Maria da Penha. Para orientação jurídica, procure a Defensoria Pública ou serviço jurídico especializado.';
-    else if (q.includes('site') || q.includes('rede violeta') || q.includes('projeto'))
-      r = 'A Rede Violeta é um projeto acadêmico da Faculdade Cruzeiro do Sul. O objetivo é reunir informação, conscientização e caminhos de apoio relacionados à violência contra a mulher.';
-    addSimpleMsg(r, 'simple-bot-msg');
+    const q = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const urgent = ['perigo imediato', 'estou em perigo', 'estou em risco', 'socorro', 'agred', 'agress', 'ameac', 'me bate']
+      .some(term => q.includes(term));
+    if (urgent) {
+      addSimpleMsg('Se houver perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 oferece orientação e informações sobre serviços de atendimento.', 'simple-bot-msg', { label: 'Ligar para 190', href: 'tel:190' });
+      return;
+    }
+
+    const intent = assistantIntents.find(item => item.keywords.some(term => q.includes(term)));
+    if (intent) {
+      const directNavigation = /(abrir|abre|ir para|ir pra|quero (ver|acessar|abrir|ir|fazer|desabafar|conhecer)|me leva|mostra|comecar|iniciar)/.test(q);
+      if (directNavigation) {
+        addSimpleMsg(intent.answer, 'simple-bot-msg');
+        navigateFromAssistant(intent.tab);
+      } else {
+        addSimpleMsg(intent.answer, 'simple-bot-msg', {
+          label: intent.label,
+          run: () => navigateFromAssistant(intent.tab)
+        });
+      }
+      return;
+    }
+
+    let answer = 'Posso levar você às seções de Recursos & Apoio, Desabafo, Meu Caso, Conheça os Casos, FAQ ou Alertas. O que gostaria de encontrar?';
+    let tab = 'recursos';
+    if (q.includes('180') || q.includes('orientacao') || q.includes('orientar')) {
+      answer = 'O Ligue 180 é a Central de Atendimento à Mulher e oferece orientação sobre direitos e serviços da rede de atendimento.';
+    } else if (q.includes('violencia') || q.includes('assedi')) {
+      answer = 'A violência contra a mulher pode ser física, psicológica, sexual, patrimonial ou moral. Se isso estiver acontecendo com você, procure uma pessoa de confiança ou um serviço especializado. Você também pode consultar os recursos do site.';
+    } else if (q.includes('medo') || q.includes('sozinha') || q.includes('triste') || q.includes('ansio')) {
+      answer = 'Sinto muito que esteja passando por isso. Você merece ser ouvida e respeitada. Se for seguro, converse com alguém de confiança; em uma emergência, ligue 190.';
+      tab = 'desabafo';
+    } else if (q.includes('lei') || q.includes('maria da penha') || q.includes('direito')) {
+      answer = 'A Lei Maria da Penha é uma das leis brasileiras de proteção às mulheres. Para orientação sobre o seu caso, procure a Defensoria Pública ou um serviço jurídico especializado.';
+    } else if (q.includes('site') || q.includes('rede violeta') || q.includes('projeto')) {
+      answer = 'A Rede Violeta é um projeto acadêmico da Faculdade Cruzeiro do Sul para informar, acolher e apresentar caminhos de apoio relacionados à violência contra a mulher.';
+    }
+    addSimpleMsg(answer, 'simple-bot-msg', {
+      label: tab === 'desabafo' ? 'Abrir espaço de desabafo' : 'Ver Recursos & Apoio',
+      run: () => navigateFromAssistant(tab)
+    });
   }, 450);
 }
 </script>
