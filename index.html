@@ -870,11 +870,11 @@
       </div>
     </div>
     <div class="simple-chat-box" id="simpleChatBox" role="log" aria-live="polite" aria-relevant="additions">
-      <div class="simple-bot-msg">Olá! 💜 Sou a <strong>Violeta</strong>, guia da Rede Violeta.
+      <div class="simple-bot-msg">Olá! 💜 Sou a <strong>Violeta</strong>, assistente com IA da Rede Violeta.
 
-Posso explicar informações do site e levar você diretamente à seção certa. Escolha um atalho ou escreva o que procura.
+Posso conversar sobre o conteúdo do site e ajudar você a encontrar a seção certa. Escolha um atalho ou escreva o que procura.
 
-Minhas respostas automáticas se limitam ao conteúdo do site. Não compartilhe dados pessoais por aqui; não substituo atendimento profissional. Se houver perigo imediato, ligue 190.</div>
+Suas mensagens são enviadas ao Google Gemini para gerar respostas. Não compartilhe dados pessoais; esta conversa não substitui atendimento profissional. Se houver perigo imediato, ligue 190.</div>
     </div>
     <div class="assistant-suggestions" aria-label="Atalhos da Violeta">
       <button type="button" onclick="sendAssistantPrompt('Quero abrir Recursos &amp; Apoio')">Preciso de apoio</button>
@@ -883,7 +883,7 @@ Minhas respostas automáticas se limitam ao conteúdo do site. Não compartilhe 
       <button type="button" onclick="sendAssistantPrompt('Quero conhecer os casos')">Conhecer os casos</button>
     </div>
     <div class="simple-chat-input">
-      <input type="text" id="simpleUserInput" placeholder="Fale com a Violeta..." onkeydown="handleSimpleEnter(event)" aria-label="Mensagem para Violeta">
+      <input type="text" id="simpleUserInput" placeholder="Fale com a Violeta..." onkeydown="handleSimpleEnter(event)" aria-label="Mensagem para Violeta" maxlength="2000">
       <button type="button" onclick="sendSimpleMessage()">Enviar</button>
     </div>
   </div>
@@ -974,40 +974,37 @@ const assistantIntents = [
   {
     tab: 'recursos',
     keywords: ['recurso', 'apoio', 'ajuda', 'delegacia', 'deam', 'denuncia', 'denunciar', 'telefone', 'canal'],
-    label: 'Abrir Recursos & Apoio',
-    answer: 'Vou mostrar os canais de apoio, serviços e orientações disponíveis na seção Recursos & Apoio.'
+    label: 'Abrir Recursos & Apoio'
   },
   {
     tab: 'desabafo',
     keywords: ['desabafo', 'desabafar', 'escrever o que sinto'],
-    label: 'Abrir espaço de desabafo',
-    answer: 'O espaço de desabafo está aqui. Você decide se quer escrever; não inclua dados que identifiquem você ou outra pessoa.'
+    label: 'Abrir espaço de desabafo'
   },
   {
     tab: 'quiz',
     keywords: ['quiz', 'meu caso', 'avaliar', 'identificar uma situacao', 'identificar situacao'],
-    label: 'Abrir Meu Caso',
-    answer: 'Vou abrir Meu Caso, um questionário informativo. Ele não é diagnóstico nem substitui orientação profissional.'
+    label: 'Abrir Meu Caso'
   },
   {
     tab: 'identificar',
     keywords: ['caso', 'angela diniz', 'daniella perez', 'eloa', 'eliza samudio', 'mercia nakashima'],
-    label: 'Conhecer os casos',
-    answer: 'Os casos históricos são apresentados na seção Conheça os Casos, com finalidade educativa.'
+    label: 'Conhecer os casos'
   },
   {
     tab: 'faq',
     keywords: ['faq', 'pergunta frequente', 'duvida', 'duvidas'],
-    label: 'Abrir perguntas frequentes',
-    answer: 'Vou abrir as perguntas frequentes para você consultar as respostas do site.'
+    label: 'Abrir perguntas frequentes'
   },
   {
     tab: 'alertas',
     keywords: ['alerta', 'mapa', 'ocorrencia', 'ocorrencias'],
-    label: 'Abrir Alertas',
-    answer: 'Vou abrir a seção de alertas. As informações exibidas ali devem ser verificadas com fontes oficiais.'
+    label: 'Abrir Alertas'
   }
 ];
+
+const assistantHistory = [];
+let assistantBusy = false;
 
 function navigateFromAssistant(tab) {
   closeAssistant();
@@ -1019,55 +1016,73 @@ function navigateFromAssistant(tab) {
   }
 }
 
-function sendSimpleMessage() {
+async function sendSimpleMessage() {
+  if (assistantBusy) return;
   const inp = document.getElementById('simpleUserInput');
   const text = inp.value.trim();
   if (!text) return;
   addSimpleMsg(text, 'simple-user-msg');
   inp.value = '';
-  setTimeout(() => {
-    const q = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    const urgent = ['perigo imediato', 'estou em perigo', 'estou em risco', 'socorro', 'agred', 'agress', 'ameac', 'me bate']
-      .some(term => q.includes(term));
-    if (urgent) {
-      addSimpleMsg('Se houver perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 oferece orientação e informações sobre serviços de atendimento.', 'simple-bot-msg', { label: 'Ligar para 190', href: 'tel:190' });
-      return;
-    }
+  const q = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const urgent = ['perigo imediato', 'estou em perigo', 'estou em risco', 'socorro', 'agred', 'agress', 'ameac', 'me bate']
+    .some(term => q.includes(term));
+  if (urgent) {
+    addSimpleMsg('Se houver perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 oferece orientação e informações sobre serviços de atendimento.', 'simple-bot-msg', { label: 'Ligar para 190', href: 'tel:190' });
+    return;
+  }
 
-    const intent = assistantIntents.find(item => item.keywords.some(term => q.includes(term)));
-    if (intent) {
-      const directNavigation = /(abrir|abre|ir para|ir pra|quero (ver|acessar|abrir|ir|fazer|desabafar|conhecer)|me leva|mostra|comecar|iniciar)/.test(q);
-      if (directNavigation) {
-        addSimpleMsg(intent.answer, 'simple-bot-msg');
-        navigateFromAssistant(intent.tab);
-      } else {
-        addSimpleMsg(intent.answer, 'simple-bot-msg', {
-          label: intent.label,
-          run: () => navigateFromAssistant(intent.tab)
-        });
-      }
-      return;
-    }
+  const intent = assistantIntents.find(item => item.keywords.some(term => q.includes(term)));
+  const directNavigation = /(abrir|abre|ir para|ir pra|quero (ver|acessar|abrir|ir|fazer|desabafar|conhecer)|me leva|mostra|comecar|iniciar)/.test(q);
+  assistantBusy = true;
+  inp.disabled = true;
+  const sendButton = document.querySelector('.simple-chat-input button');
+  if (sendButton) sendButton.disabled = true;
+  assistantHistory.push({ role: 'user', text });
 
-    let answer = 'Posso levar você às seções de Recursos & Apoio, Desabafo, Meu Caso, Conheça os Casos, FAQ ou Alertas. O que gostaria de encontrar?';
-    let tab = 'recursos';
-    if (q.includes('180') || q.includes('orientacao') || q.includes('orientar')) {
-      answer = 'O Ligue 180 é a Central de Atendimento à Mulher e oferece orientação sobre direitos e serviços da rede de atendimento.';
-    } else if (q.includes('violencia') || q.includes('assedi')) {
-      answer = 'A violência contra a mulher pode ser física, psicológica, sexual, patrimonial ou moral. Se isso estiver acontecendo com você, procure uma pessoa de confiança ou um serviço especializado. Você também pode consultar os recursos do site.';
-    } else if (q.includes('medo') || q.includes('sozinha') || q.includes('triste') || q.includes('ansio')) {
-      answer = 'Sinto muito que esteja passando por isso. Você merece ser ouvida e respeitada. Se for seguro, converse com alguém de confiança; em uma emergência, ligue 190.';
-      tab = 'desabafo';
-    } else if (q.includes('lei') || q.includes('maria da penha') || q.includes('direito')) {
-      answer = 'A Lei Maria da Penha é uma das leis brasileiras de proteção às mulheres. Para orientação sobre o seu caso, procure a Defensoria Pública ou um serviço jurídico especializado.';
-    } else if (q.includes('site') || q.includes('rede violeta') || q.includes('projeto')) {
-      answer = 'A Rede Violeta é um projeto acadêmico da Faculdade Cruzeiro do Sul para informar, acolher e apresentar caminhos de apoio relacionados à violência contra a mulher.';
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+    let response;
+    try {
+      response = await fetch(`${API_BASE}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: assistantHistory.slice(-12) }),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeout);
     }
-    addSimpleMsg(answer, 'simple-bot-msg', {
-      label: tab === 'desabafo' ? 'Abrir espaço de desabafo' : 'Ver Recursos & Apoio',
-      run: () => navigateFromAssistant(tab)
-    });
-  }, 450);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Não foi possível conectar ao Gemini.');
+    const reply = typeof data.reply === 'string' ? data.reply.trim() : '';
+    if (!reply) throw new Error('A Violeta não recebeu uma resposta válida. Tente novamente.');
+
+    assistantHistory.push({ role: 'model', text: reply });
+    if (assistantHistory.length > 12) assistantHistory.splice(0, assistantHistory.length - 12);
+    const action = intent ? {
+      label: intent.label,
+      run: () => navigateFromAssistant(intent.tab)
+    } : null;
+    addSimpleMsg(reply, 'simple-bot-msg', action);
+    if (intent && directNavigation) navigateFromAssistant(intent.tab);
+  } catch (error) {
+    assistantHistory.pop();
+    const message = error.name === 'AbortError'
+      ? 'A resposta demorou demais. Tente novamente. Se houver perigo imediato, ligue 190.'
+      : `${error.message} Se houver perigo imediato, ligue 190.`;
+    const action = intent ? {
+      label: intent.label,
+      run: () => navigateFromAssistant(intent.tab)
+    } : null;
+    addSimpleMsg(message, 'simple-bot-msg', action);
+    if (intent && directNavigation) navigateFromAssistant(intent.tab);
+  } finally {
+    assistantBusy = false;
+    inp.disabled = false;
+    if (sendButton) sendButton.disabled = false;
+    inp.focus();
+  }
 }
 </script>
 
