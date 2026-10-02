@@ -154,7 +154,7 @@
 </div>
 
 <!-- ───────── Tabs ───────── -->
-<nav class="tab-nav" role="tablist">
+<nav class="tab-nav" role="tablist" aria-label="Seções do site">
   <button class="tab-btn active" onclick="switchTab('desabafo')" role="tab" aria-selected="true">
     <i class="fa-solid fa-comments"></i> Desabafo
   </button>
@@ -992,7 +992,7 @@ function changeFontSize(amount) {
   saveA11ySettings();
 }
 
-function toggleA11yPanel(forceOpen) {
+function toggleA11yPanel(forceOpen, restoreFocus = true) {
   const panel = document.getElementById('a11yPanel');
   const button = document.getElementById('a11yToggle');
   const open = forceOpen ?? panel.hidden;
@@ -1000,7 +1000,7 @@ function toggleA11yPanel(forceOpen) {
   panel.classList.toggle('open', open);
   button.setAttribute('aria-expanded', String(open));
   if (open) document.getElementById('a11yClose').focus();
-  else button.focus();
+  else if (restoreFocus) button.focus();
 }
 
 try {
@@ -1042,7 +1042,7 @@ document.addEventListener('keydown', event => {
 document.addEventListener('click', event => {
   const panel = document.getElementById('a11yPanel');
   if (!panel.hidden && !panel.contains(event.target) && event.target !== document.getElementById('a11yToggle')) {
-    toggleA11yPanel(false);
+    toggleA11yPanel(false, false);
   }
 });
 

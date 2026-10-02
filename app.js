@@ -33,7 +33,10 @@ function switchTab(tab) {
     btns[idx].classList.add('active');
     btns[idx].setAttribute('aria-selected', 'true');
   }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({
+    top: 0,
+    behavior: document.body.classList.contains('a11y-reduce-motion') ? 'auto' : 'smooth',
+  });
   if (tab === 'identificar' && !mapInitialized) setTimeout(initMap, 120);
   if (tab === 'identificar') initTimeline();
   if (tab === 'recursos')    initRecursos();
