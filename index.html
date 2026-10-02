@@ -919,14 +919,14 @@ Posso conversar sobre o conteúdo do site e ajudar você a encontrar a seção c
 Suas mensagens são enviadas ao Google Gemini para gerar respostas. Não compartilhe dados pessoais; esta conversa não substitui atendimento profissional. Se houver perigo imediato, ligue 190.</div>
     </div>
     <div class="assistant-suggestions" aria-label="Atalhos da Violeta">
-      <button type="button" onclick="sendAssistantPrompt('Quero abrir Recursos &amp; Apoio')">Preciso de apoio</button>
-      <button type="button" onclick="sendAssistantPrompt('Quero desabafar')">Quero desabafar</button>
-      <button type="button" onclick="sendAssistantPrompt('Quero fazer o quiz')">Fazer o quiz</button>
-      <button type="button" onclick="sendAssistantPrompt('Quero conhecer os casos')">Conhecer os casos</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero abrir Recursos &amp; Apoio', true)">Preciso de apoio</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero desabafar', true)">Quero desabafar</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero fazer o quiz', true)">Fazer o quiz</button>
+      <button type="button" onclick="sendAssistantPrompt('Quero conhecer os casos', true)">Conhecer os casos</button>
     </div>
     <div class="simple-chat-input">
       <input type="text" id="simpleUserInput" placeholder="Fale com a Violeta..." onkeydown="handleSimpleEnter(event)" aria-label="Mensagem para Violeta" maxlength="2000">
-      <button type="button" onclick="sendSimpleMessage()">Enviar</button>
+      <button type="button" onclick="sendSimpleMessage(false)">Enviar</button>
     </div>
   </div>
 </div>
@@ -1049,13 +1049,49 @@ document.addEventListener('click', event => {
 /* ── Guia da Violeta ── */
 let assistantReturnFocus = null;
 
+const assistantInertState = [];
+function setAssistantBackgroundInert(on) {
+  const modal = document.getElementById('assistantModal');
+  if (on) {
+    Array.from(document.body.children).forEach(el => {
+      if (el === modal || el.tagName === 'SCRIPT' || el.inert) return;
+      el.inert = true;
+      el.setAttribute('aria-hidden', 'true');
+      assistantInertState.push(el);
+    });
+  } else {
+    assistantInertState.splice(0).forEach(el => {
+      el.inert = false;
+      el.removeAttribute('aria-hidden');
+    });
+  }
+}
+function trapAssistantFocus(e) {
+  const modal = document.getElementById('assistantModal');
+  if (e.key !== 'Tab' || modal.style.display !== 'block') return;
+  const items = Array.from(modal.querySelectorAll('button, a[href], input, [tabindex]:not([tabindex="-1"])'))
+    .filter(el => !el.disabled && el.offsetParent !== null);
+  if (!items.length) { e.preventDefault(); return; }
+  const first = items[0], last = items[items.length - 1];
+  if (!modal.contains(document.activeElement)) {
+    e.preventDefault(); first.focus();
+  } else if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault(); last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault(); first.focus();
+  }
+}
+document.addEventListener('keydown', trapAssistantFocus);
+
 function openAssistant() {
   assistantReturnFocus = document.activeElement;
   document.getElementById('assistantModal').style.display = 'block';
+  setAssistantBackgroundInert(true);
   setTimeout(() => { const i = document.getElementById('simpleUserInput'); if (i) i.focus(); }, 100);
 }
 function closeAssistant() {
   document.getElementById('assistantModal').style.display = 'none';
+  setAssistantBackgroundInert(false);
   if (assistantReturnFocus && typeof assistantReturnFocus.focus === 'function') assistantReturnFocus.focus();
 }
 window.addEventListener('click', function(e) {
@@ -1065,7 +1101,7 @@ window.addEventListener('keydown', function(e) {
   if (e.key === 'Escape' && document.getElementById('assistantModal').style.display === 'block') closeAssistant();
 });
 function handleSimpleEnter(e) {
-  if (e.key === 'Enter') sendSimpleMessage();
+  if (e.key === 'Enter') sendSimpleMessage(false);
 }
 function addSimpleMsg(text, cls, action) {
   const box = document.getElementById('simpleChatBox');
@@ -1088,9 +1124,9 @@ function addSimpleMsg(text, cls, action) {
   box.scrollTop = box.scrollHeight;
 }
 
-function sendAssistantPrompt(text) {
+function sendAssistantPrompt(text, explicit) {
   document.getElementById('simpleUserInput').value = text;
-  sendSimpleMessage();
+  sendSimpleMessage(explicit === true);
 }
 
 const assistantIntents = [
@@ -1139,7 +1175,7 @@ function navigateFromAssistant(tab) {
   }
 }
 
-async function sendSimpleMessage() {
+async function sendSimpleMessage(explicitShortcut) {
   if (assistantBusy) return;
   const inp = document.getElementById('simpleUserInput');
   const text = inp.value.trim();
@@ -1155,7 +1191,7 @@ async function sendSimpleMessage() {
   }
 
   const intent = assistantIntents.find(item => item.keywords.some(term => q.includes(term)));
-  const directNavigation = /(abrir|abre|ir para|ir pra|quero (ver|acessar|abrir|ir|fazer|desabafar|conhecer)|me leva|mostra|comecar|iniciar)/.test(q);
+  const directNavigation = explicitShortcut === true;
   assistantBusy = true;
   inp.disabled = true;
   const sendButton = document.querySelector('.simple-chat-input button');
@@ -1178,10 +1214,15 @@ async function sendSimpleMessage() {
     } finally {
       clearTimeout(timeout);
     }
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || 'Não foi possível conectar ao Gemini.');
-    const reply = typeof data.reply === 'string' ? data.reply.trim() : '';
-    if (!reply) throw new Error('A Violeta não recebeu uma resposta válida. Tente novamente.');
+    let data = null;
+    try { data = await response.json(); } catch (_) { data = null; }
+    if (!response.ok) {
+      const err = new Error('http');
+      err.status = response.status;
+      throw err;
+    }
+    const reply = data && typeof data.reply === 'string' ? data.reply.trim() : '';
+    if (!reply) throw new Error('invalid');
 
     assistantHistory.push({ role: 'model', text: reply });
     if (assistantHistory.length > 12) assistantHistory.splice(0, assistantHistory.length - 12);
@@ -1193,9 +1234,11 @@ async function sendSimpleMessage() {
     if (intent && directNavigation) navigateFromAssistant(intent.tab);
   } catch (error) {
     assistantHistory.pop();
-    const message = error.name === 'AbortError'
-      ? 'A resposta demorou demais. Tente novamente. Se houver perigo imediato, ligue 190.'
-      : `${error.message} Se houver perigo imediato, ligue 190.`;
+    let message = 'A Violeta não conseguiu responder agora. Tente novamente em instantes.';
+    if (error.name === 'AbortError') message = 'A resposta demorou demais. Tente novamente.';
+    else if (error.status === 429) message = 'Muitas mensagens em pouco tempo. Aguarde um instante e tente novamente.';
+    else if (error.status === 503) message = 'A Violeta está indisponível ou ocupada no momento. Tente novamente mais tarde.';
+    message += ' Se houver perigo imediato, ligue 190.';
     const action = intent ? {
       label: intent.label,
       run: () => navigateFromAssistant(intent.tab)
