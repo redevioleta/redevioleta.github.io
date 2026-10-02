@@ -10,6 +10,48 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
+<a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
+<button class="a11y-fab" id="a11yToggle" type="button" aria-label="Abrir opções de acessibilidade" aria-controls="a11yPanel" aria-expanded="false" title="Acessibilidade">
+  <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
+</button>
+<section class="a11y-panel" id="a11yPanel" aria-label="Opções de acessibilidade" hidden>
+  <h2>
+    Acessibilidade
+    <button class="a11y-close" id="a11yClose" type="button" aria-label="Fechar opções de acessibilidade">&times;</button>
+  </h2>
+  <p class="a11y-sub">Personalize a leitura e a navegação. As opções ficam salvas neste dispositivo.</p>
+  <div class="a11y-option">
+    <span class="a11y-label" id="a11yFontLabel">Tamanho do texto</span>
+    <div class="a11y-font-controls">
+      <button id="a11yFontDown" type="button" aria-label="Diminuir tamanho do texto">A−</button>
+      <button id="a11yFontUp" type="button" aria-label="Aumentar tamanho do texto">A+</button>
+    </div>
+  </div>
+  <label class="a11y-option" for="a11yContrast">
+    <span class="a11y-label">Alto contraste</span>
+    <span class="a11y-switch">
+      <input id="a11yContrast" type="checkbox" aria-label="Ativar alto contraste">
+      <span class="a11y-track" aria-hidden="true"></span>
+      <span class="a11y-thumb" aria-hidden="true"></span>
+    </span>
+  </label>
+  <label class="a11y-option" for="a11yMotion">
+    <span class="a11y-label">Reduzir animações</span>
+    <span class="a11y-switch">
+      <input id="a11yMotion" type="checkbox" aria-label="Reduzir animações">
+      <span class="a11y-track" aria-hidden="true"></span>
+      <span class="a11y-thumb" aria-hidden="true"></span>
+    </span>
+  </label>
+  <label class="a11y-option" for="a11yFocus">
+    <span class="a11y-label">Destacar foco do teclado</span>
+    <span class="a11y-switch">
+      <input id="a11yFocus" type="checkbox" aria-label="Destacar foco do teclado">
+      <span class="a11y-track" aria-hidden="true"></span>
+      <span class="a11y-thumb" aria-hidden="true"></span>
+    </span>
+  </label>
+</section>
 
 <!-- ─── Banner Campanha ─── -->
 <div class="campaign-banner">
@@ -134,7 +176,7 @@
 </nav>
 
 <!-- ───────── Main ───────── -->
-<main>
+<main id="conteudo-principal" tabindex="-1">
 
   <!-- ══════ ABA 1 — DESABAFO ══════ -->
   <section id="tab-desabafo" class="tab-pane active">
@@ -922,6 +964,87 @@ setInterval(() => {
   const el = document.getElementById('comfortMessage');
   if (el) el.textContent = '\u201c' + comfortMessages[comfortIdx] + '\u201d';
 }, 6500);
+
+/* ── Acessibilidade ── */
+const a11yStorageKey = 'rede-violeta-accessibility';
+const a11yDefaults = { fontSize: 16, highContrast: false, reduceMotion: false, strongFocus: false };
+let a11ySettings = { ...a11yDefaults };
+
+function saveA11ySettings() {
+  try {
+    localStorage.setItem(a11yStorageKey, JSON.stringify(a11ySettings));
+  } catch {}
+}
+
+function applyA11ySettings() {
+  document.documentElement.style.fontSize = `${a11ySettings.fontSize}px`;
+  document.body.classList.toggle('a11y-high-contrast', a11ySettings.highContrast);
+  document.body.classList.toggle('a11y-reduce-motion', a11ySettings.reduceMotion);
+  document.body.classList.toggle('a11y-strong-focus', a11ySettings.strongFocus);
+  document.getElementById('a11yContrast').checked = a11ySettings.highContrast;
+  document.getElementById('a11yMotion').checked = a11ySettings.reduceMotion;
+  document.getElementById('a11yFocus').checked = a11ySettings.strongFocus;
+}
+
+function changeFontSize(amount) {
+  a11ySettings.fontSize = Math.max(14, Math.min(24, a11ySettings.fontSize + amount));
+  applyA11ySettings();
+  saveA11ySettings();
+}
+
+function toggleA11yPanel(forceOpen) {
+  const panel = document.getElementById('a11yPanel');
+  const button = document.getElementById('a11yToggle');
+  const open = forceOpen ?? panel.hidden;
+  panel.hidden = !open;
+  panel.classList.toggle('open', open);
+  button.setAttribute('aria-expanded', String(open));
+  if (open) document.getElementById('a11yClose').focus();
+  else button.focus();
+}
+
+try {
+  const savedA11ySettings = JSON.parse(localStorage.getItem(a11yStorageKey));
+  if (savedA11ySettings && typeof savedA11ySettings === 'object') {
+    const fontSize = Number(savedA11ySettings.fontSize);
+    a11ySettings = {
+      fontSize: Number.isFinite(fontSize) ? Math.max(14, Math.min(24, fontSize)) : a11yDefaults.fontSize,
+      highContrast: savedA11ySettings.highContrast === true,
+      reduceMotion: savedA11ySettings.reduceMotion === true,
+      strongFocus: savedA11ySettings.strongFocus === true
+    };
+  }
+} catch {}
+
+applyA11ySettings();
+document.getElementById('a11yToggle').addEventListener('click', () => toggleA11yPanel());
+document.getElementById('a11yClose').addEventListener('click', () => toggleA11yPanel(false));
+document.getElementById('a11yFontDown').addEventListener('click', () => changeFontSize(-2));
+document.getElementById('a11yFontUp').addEventListener('click', () => changeFontSize(2));
+document.getElementById('a11yContrast').addEventListener('change', event => {
+  a11ySettings.highContrast = event.target.checked;
+  applyA11ySettings();
+  saveA11ySettings();
+});
+document.getElementById('a11yMotion').addEventListener('change', event => {
+  a11ySettings.reduceMotion = event.target.checked;
+  applyA11ySettings();
+  saveA11ySettings();
+});
+document.getElementById('a11yFocus').addEventListener('change', event => {
+  a11ySettings.strongFocus = event.target.checked;
+  applyA11ySettings();
+  saveA11ySettings();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !document.getElementById('a11yPanel').hidden) toggleA11yPanel(false);
+});
+document.addEventListener('click', event => {
+  const panel = document.getElementById('a11yPanel');
+  if (!panel.hidden && !panel.contains(event.target) && event.target !== document.getElementById('a11yToggle')) {
+    toggleA11yPanel(false);
+  }
+});
 
 /* ── Guia da Violeta ── */
 let assistantReturnFocus = null;
