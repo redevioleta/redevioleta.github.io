@@ -41,8 +41,12 @@ A API sobe em `http://localhost:8000`. A documentação interativa
 O chat usa a API do Gemini pelo backend; a chave nunca deve ser colocada no
 HTML ou no JavaScript público. Configure `GEMINI_API_KEY` nas variáveis de
 ambiente do serviço que executa o backend (por exemplo, em **Environment** no
-Render). Opcionalmente, configure `GEMINI_MODEL` para escolher outro modelo
-disponível na sua conta; o padrão é `gemini-2.5-flash`.
+Render). O blueprint em `render.yaml` solicita essa chave como um segredo ao
+configurar o serviço. Opcionalmente, altere `GEMINI_MODEL` para escolher outro
+modelo disponível na sua conta; o padrão é `gemini-2.5-flash`.
+
+O endpoint `/health` informa `gemini_configured: true` quando a chave está
+disponível no processo do backend; ele nunca retorna a chave.
 
 O frontend no GitHub Pages usa por padrão
 `https://rede-violeta.onrender.com/api/v1`, correspondente ao serviço declarado

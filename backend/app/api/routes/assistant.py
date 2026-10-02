@@ -93,7 +93,7 @@ async def chat(dados: AssistantChatRequest):
     if not settings.gemini_api_key:
         raise HTTPException(
             status_code=503,
-            detail="Assistente IA indisponível no momento. Tente novamente mais tarde.",
+            detail="Gemini ainda não está configurado. Adicione GEMINI_API_KEY nas variáveis de ambiente do backend.",
         )
     reply = await asyncio.to_thread(_generate_reply, dados.messages)
     return AssistantChatResponse(reply=reply)
