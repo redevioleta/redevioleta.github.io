@@ -42,3 +42,6 @@ logs/
 .pytest_cache/
 htmlcov/
 .coverage
+
+# Azure / Bicep
+*.parameters.local.json

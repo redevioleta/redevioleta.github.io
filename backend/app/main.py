@@ -14,7 +14,7 @@ FRONTEND_DIR = Path(__file__).resolve().parents[2]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origin_list,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -28,4 +28,5 @@ def healthcheck():
         "gemini_configured": bool(settings.gemini_api_key),
     }
 
-app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+if (FRONTEND_DIR / "index.html").is_file():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

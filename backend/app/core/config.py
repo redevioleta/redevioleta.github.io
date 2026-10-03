@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     app_name: str = "Fala Segura API"
     api_v1_prefix: str = "/api/v1"
     database_url: str = f"sqlite:///{_DB}"
+    # Origens permitidas no CORS, separadas por vírgula.
+    cors_origins: str = "https://redevioleta.github.io,http://localhost:8000,http://127.0.0.1:8000"
 
     # ── Violeta IA (chat com IA generativa) ──
     # Compatível com qualquer provedor que siga o padrão de API da OpenAI
@@ -20,6 +22,19 @@ class Settings(BaseSettings):
     openai_timeout_seconds: float = 20.0
     gemini_api_key: Optional[str] = None
     gemini_model: str = "gemini-2.5-flash"
+
+    @property
+    def sqlalchemy_database_url(self) -> str:
+        """Normaliza DATABASE_URL para o driver psycopg 3 quando for PostgreSQL."""
+        url = self.database_url.strip()
+        for prefix in ("postgresql://", "postgres://"):
+            if url.startswith(prefix):
+                return "postgresql+psycopg://" + url[len(prefix):]
+        return url
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [o.strip().rstrip("/") for o in self.cors_origins.split(",") if o.strip()]
 
     @property
     def ai_enabled(self) -> bool:

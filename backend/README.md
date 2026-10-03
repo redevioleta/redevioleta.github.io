@@ -65,11 +65,13 @@ o banco de verdade, os pontos de integração são:
 Nada na lógica das rotas depende de SQLite especificamente — trocar
 o banco é basicamente trocar a `database_url` e ajustar os models.
 
+> Deploy em produção (Azure Container Apps + PostgreSQL): veja [AZURE_DEPLOY.md](AZURE_DEPLOY.md).
+
 ## Violeta IA (chat com IA generativa)
 
 A rota `POST /api/v1/chat/` conecta o chat "Violeta" a uma IA generativa
 compatível com a API da OpenAI (OpenAI, Groq, OpenRouter etc.). Também
-mantém suporte à chave `GEMINI_API_KEY` já usada pelo serviço Render:
+mantém suporte à chave `GEMINI_API_KEY` usada no deploy em Azure Container Apps:
 nesse caso, usa a API compatível com OpenAI do Gemini. Para configurar
 outro provedor, crie um arquivo `.env` em `backend/` com:
 
