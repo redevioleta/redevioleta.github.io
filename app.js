@@ -22,13 +22,16 @@ function safeHttpUrl(value) {
 }
 
 /* ── Backend ── */
-const API_BASE = window.REDE_VIOLETA_API_BASE || (
-  window.location.hostname.endsWith('.github.io')
-    ? 'https://rede-violeta.onrender.com/api/v1'
-    : window.location.protocol === 'file:'
-      ? 'http://127.0.0.1:8000/api/v1'
-      : '/api/v1'
-);
+/* Base da API: window.REDE_VIOLETA_API_BASE (definida em config.js; no GitHub Pages vem
+   da variável de Actions REDE_VIOLETA_API_BASE com a URL do Azure Container Apps). */
+function resolveApiBase() {
+  const configured = typeof window.REDE_VIOLETA_API_BASE === 'string'
+    ? window.REDE_VIOLETA_API_BASE.trim().replace(/\/+$/, '')
+    : '';
+  if (configured) return configured;
+  return window.location.protocol === 'file:' ? 'http://127.0.0.1:8000/api/v1' : '/api/v1';
+}
+const API_BASE = resolveApiBase();
 window.REDE_VIOLETA_API_BASE = API_BASE;
 
 async function apiFetch(path, options = {}) {
