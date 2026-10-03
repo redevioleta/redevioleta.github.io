@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Literal, Optional, List
 from pydantic import BaseModel
 
 class DesabafoCreate(BaseModel):
@@ -111,3 +111,24 @@ class AlertaComunitarioOut(AlertaComunitarioCreate):
 
     class Config:
         from_attributes = True
+
+
+class ChatMensagem(BaseModel):
+    """Uma mensagem do histórico de conversa, mantida apenas em memória
+    (enviada pelo próprio frontend a cada requisição) — nunca persistida
+    no servidor."""
+    role: Literal["user", "assistant"]
+    content: str
+
+
+class ChatRequest(BaseModel):
+    mensagem: str
+    historico: List[ChatMensagem] = []
+    idioma: Literal["pt", "en", "es"] = "pt"
+    idioma: Literal["pt", "en", "es"] = "pt"
+
+
+class ChatResponse(BaseModel):
+    resposta: str
+    fonte: Literal["ia", "regras", "seguranca"]
+    alerta_seguranca: bool = False

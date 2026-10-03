@@ -10,7 +10,7 @@ from app.api.routes import (
     timeline,
     delegacias,
     alertas,
-    assistant,
+    chat,
 )
 
 api_router = APIRouter()
@@ -24,4 +24,4 @@ api_router.include_router(faq.router)
 api_router.include_router(timeline.router)
 api_router.include_router(delegacias.router)
 api_router.include_router(alertas.router)
-api_router.include_router(assistant.router)
+api_router.include_router(chat.router)
