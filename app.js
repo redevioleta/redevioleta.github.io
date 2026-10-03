@@ -23,24 +23,30 @@ function safeHttpUrl(value) {
 
 /* ── Backend ── */
 const API_BASE = window.REDE_VIOLETA_API_BASE || (
-  window.location.hostname === 'redevioleta.github.io'
+  window.location.hostname.endsWith('.github.io')
     ? 'https://rede-violeta.onrender.com/api/v1'
-    : '/api/v1'
+    : window.location.protocol === 'file:'
+      ? 'http://127.0.0.1:8000/api/v1'
+      : '/api/v1'
 );
+window.REDE_VIOLETA_API_BASE = API_BASE;
 
 async function apiFetch(path, options = {}) {
+  const ctrl  = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 3000);
   try {
-    const ctrl  = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 3000);
     const res = await fetch(API_BASE + path, {
       headers: { 'Content-Type': 'application/json' },
       signal: ctrl.signal,
       ...options,
     });
-    clearTimeout(timer);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
-  } catch { return null; }
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function switchTab(tab) {
@@ -77,6 +83,10 @@ function updateCharCount(el, countId, max) {
   document.getElementById(countId).textContent = el.value.length;
 }
 
+function textoNoIdioma(texto) {
+  return typeof window.translateSiteText === 'function' ? window.translateSiteText(texto) : texto;
+}
+
 /* ── Mood ── */
 const moodMessages = {
   'triste':           'É normal sentir tristeza. Permita-se sentir, mas lembre-se de buscar apoio. Você não está sozinha/o.',
@@ -99,16 +109,24 @@ document.getElementById('moodRow').addEventListener('click', e => {
   btn.setAttribute('aria-pressed', 'true');
   const mood = btn.dataset.mood;
   const fb = document.getElementById('moodFeedback');
-  document.getElementById('moodFeedbackText').textContent = moodMessages[mood] || '';
+  document.getElementById('moodFeedbackText').textContent = textoNoIdioma(moodMessages[mood] || '');
   fb.style.display = 'flex';
 });
 
 /* ── Desabafo ── */
 async function enviarDesabafo() {
   const txt = document.getElementById('desabafoText').value.trim();
-  if (!txt) { alert('Escreva algo antes de registrar seu desabafo. 💙'); return; }
+  if (!txt) { alert(textoNoIdioma('Escreva algo antes de registrar seu desabafo. 💙')); return; }
 
-  apiFetch('/desabafos/', { method: 'POST', body: JSON.stringify({ texto: txt, anonimo: true }) });
+  document.getElementById('desabafoError').classList.add('is-hidden');
+  const registro = await apiFetch('/desabafos/', {
+    method: 'POST',
+    body: JSON.stringify({ texto: txt, anonimo: true }),
+  });
+  if (!registro?.id) {
+    document.getElementById('desabafoError').classList.remove('is-hidden');
+    return;
+  }
 
   const classifEl = document.getElementById('assedioClassif');
   classifEl.dataset.texto = txt;
@@ -130,12 +148,16 @@ async function enviarDesabafo() {
 function limparDesabafo() {
   document.getElementById('desabafoText').value = '';
   document.getElementById('desabafoCount').textContent = '0';
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.setAttribute('aria-pressed', 'false');
+  });
   document.getElementById('moodFeedback').style.display = 'none';
 }
 
 function novoDesabafo() {
   document.getElementById('desabafoSuccess').style.display = 'none';
+  document.getElementById('desabafoError').classList.add('is-hidden');
   document.querySelector('#tab-desabafo .card').style.display = '';
   const classifEl = document.getElementById('assedioClassif');
   classifEl.classList.add('is-hidden');
@@ -150,6 +172,7 @@ async function formalizarDenuncia() {
   const txt = document.getElementById('assedioClassif').dataset.texto || '';
   if (!txt) return;
   const btn = document.getElementById('btnFormalizar');
+  document.getElementById('formalizarError').classList.add('is-hidden');
   btn.disabled = true;
   const result = await apiFetch('/denuncias/', {
     method: 'POST',
@@ -159,6 +182,7 @@ async function formalizarDenuncia() {
     document.getElementById('formalizarConfirm').classList.remove('is-hidden');
     btn.classList.add('is-hidden');
   } else {
+    document.getElementById('formalizarError').classList.remove('is-hidden');
     btn.disabled = false;
   }
 }
@@ -173,7 +197,7 @@ function quizNav(dir) {
   const radios    = document.querySelectorAll(`input[name="q${qCurrent}"]`);
   const answered  = Array.from(radios).some(r => r.checked);
 
-  if (dir === 1 && !answered) { alert('Selecione uma opção antes de avançar.'); return; }
+  if (dir === 1 && !answered) { alert(textoNoIdioma('Selecione uma opção antes de avançar.')); return; }
 
   if (dir === 1) {
     const val = parseInt(document.querySelector(`input[name="q${qCurrent}"]:checked`).value);
@@ -190,12 +214,18 @@ function quizNav(dir) {
   }
 
   questions[qCurrent].style.display = 'block';
-  document.getElementById('qProgressLabel').textContent = `Pergunta ${qCurrent + 1} de ${qTotal}`;
+  const language = typeof window.getSiteLanguage === 'function' ? window.getSiteLanguage() : 'pt';
+  const progressLabel = language === 'en'
+    ? `Question ${qCurrent + 1} of ${qTotal}`
+    : language === 'es'
+      ? `Pregunta ${qCurrent + 1} de ${qTotal}`
+      : `Pergunta ${qCurrent + 1} de ${qTotal}`;
+  document.getElementById('qProgressLabel').textContent = progressLabel;
   const pct = Math.round((qCurrent / qTotal) * 100);
   document.getElementById('qProgressPct').textContent = pct + '%';
   document.getElementById('qProgressBar').style.width = pct + '%';
   document.getElementById('qBtnBack').style.visibility = qCurrent === 0 ? 'hidden' : 'visible';
-  document.getElementById('qBtnNext').textContent = qCurrent === qTotal - 1 ? 'Ver Resultado ✓' : 'Próxima →';
+  document.getElementById('qBtnNext').textContent = textoNoIdioma(qCurrent === qTotal - 1 ? 'Ver Resultado ✓' : 'Próxima →');
 }
 
 function mostrarResultadoQuiz() {
@@ -214,20 +244,20 @@ function mostrarResultadoQuiz() {
   if (total <= 3) {
     circle.className = 'result-circle result-ok';
     circle.textContent = '✅';
-    title.textContent = 'Situação aparentemente segura';
-    desc.textContent = 'Suas respostas não indicam sinais fortes de assédio no momento. Continue atenta/o e lembre-se: qualquer desconforto merece atenção. Fique segura/o e cuide-se!';
+    title.textContent = textoNoIdioma('Situação aparentemente segura');
+    desc.textContent = textoNoIdioma('Suas respostas não indicam sinais fortes de assédio no momento. Continue atenta/o e lembre-se: qualquer desconforto merece atenção. Fique segura/o e cuide-se!');
     alerta.style.display = 'none';
   } else if (total <= 9) {
     circle.className = 'result-circle result-atencao';
     circle.textContent = '⚠️';
-    title.textContent = 'Sinal de atenção — fique alerta';
-    desc.textContent = 'Suas respostas indicam situações que merecem atenção. Algumas experiências que você relatou podem configurar assédio. Conversar com alguém de confiança ou um profissional pode ajudar a esclarecer a situação.';
+    title.textContent = textoNoIdioma('Sinal de atenção — fique alerta');
+    desc.textContent = textoNoIdioma('Suas respostas indicam situações que merecem atenção. Algumas experiências que você relatou podem configurar assédio. Conversar com alguém de confiança ou um profissional pode ajudar a esclarecer a situação.');
     alerta.style.display = 'none';
   } else {
     circle.className = 'result-circle result-alerta';
     circle.textContent = '🆘';
-    title.textContent = 'Indicadores de assédio ou violência';
-    desc.textContent = 'Suas respostas indicam que você pode estar em situação de assédio ou violência. Você não está sozinha/o e há apoio disponível. Busque ajuda agora — use os canais abaixo ou a aba Fazer Denúncia.';
+    title.textContent = textoNoIdioma('Indicadores de assédio ou violência');
+    desc.textContent = textoNoIdioma('Suas respostas indicam que você pode estar em situação de assédio ou violência. Você não está sozinha/o e há apoio disponível. Busque ajuda agora — use os canais abaixo ou a aba Fazer Denúncia.');
     alerta.style.display = 'flex';
   }
 
@@ -245,11 +275,14 @@ function resetQuiz() {
   document.getElementById('quizResult').style.display = 'none';
   document.getElementById('quizQuestions').style.display = '';
   document.getElementById('quizNav').style.display = '';
-  document.getElementById('qProgressLabel').textContent = 'Pergunta 1 de 8';
+  const language = typeof window.getSiteLanguage === 'function' ? window.getSiteLanguage() : 'pt';
+  document.getElementById('qProgressLabel').textContent = language === 'en'
+    ? 'Question 1 of 8'
+    : language === 'es' ? 'Pregunta 1 de 8' : 'Pergunta 1 de 8';
   document.getElementById('qProgressPct').textContent = '0%';
   document.getElementById('qProgressBar').style.width = '0%';
   document.getElementById('qBtnBack').style.visibility = 'hidden';
-  document.getElementById('qBtnNext').textContent = 'Próxima →';
+  document.getElementById('qBtnNext').textContent = textoNoIdioma('Próxima →');
 }
 
 /* ── FAQ Search ── */
@@ -317,7 +350,11 @@ function timeAgo(ts) {
   return `${Math.floor(h / 24)}d atrás`;
 }
 
-const urgenciaLabel = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
+const urgenciaLabel = {
+  alta: textoNoIdioma('Alta'),
+  media: textoNoIdioma('Média'),
+  baixa: textoNoIdioma('Baixa')
+};
 const urgenciaClass = { alta: 'urgencia-tag-alta', media: 'urgencia-tag-media', baixa: 'urgencia-tag-baixa' };
 
 let filtroAtivo = 'todos';
@@ -333,12 +370,14 @@ function _paintFeed(lista) {
     return String(a.tipo || '').toLowerCase().includes(filtroAtivo.toLowerCase());
   });
   vazio.classList.toggle('is-hidden', filtrados.length > 0);
-  feed.innerHTML = filtrados.map(a => `
-    <div class="alerta-card urgencia-borda-${['alta', 'media', 'baixa'].includes(a.urgencia) ? a.urgencia : 'media'}">
+  feed.innerHTML = filtrados.map(a => {
+    const urgencia = ['alta', 'media', 'baixa'].includes(a.urgencia) ? a.urgencia : 'media';
+    return `
+    <div class="alerta-card urgencia-borda-${urgencia}">
       <div class="alerta-header">
-        <span class="alerta-tipo">${escapeHTML(a.tipo)}</span>
-        <span class="urgencia-tag ${urgenciaClass[a.urgencia] || urgenciaClass.media}">
-          <i class="fa-solid fa-circle"></i> ${urgenciaLabel[a.urgencia] || urgenciaLabel.media}
+        <span class="alerta-tipo">${escapeHTML(textoNoIdioma(a.tipo))}</span>
+        <span class="urgencia-tag ${urgenciaClass[urgencia]}">
+          <i class="fa-solid fa-circle"></i> ${urgenciaLabel[urgencia]}
         </span>
       </div>
       <div class="alerta-local">
@@ -347,12 +386,13 @@ function _paintFeed(lista) {
       </div>
       <p class="alerta-desc">${escapeHTML(a.desc)}</p>
       <div class="alerta-footer">
-        <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
+        <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${escapeHTML(timeAgo(a.ts))}</span>
         <button class="alerta-confirmar" data-alert-id="${escapeHTML(a.id)}" aria-label="Confirmar alerta">
           <i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">${escapeHTML(a.confirmacoes)}</span>
         </button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function _mapBackendAlerta(a) {
@@ -408,7 +448,7 @@ async function confirmarAlerta(id) {
     await apiFetch(`/alertas/${numId}/confirmar`, { method: 'PATCH' });
   } else {
     const lista = loadAlertas();
-    const a = lista.find(x => x.id === id);
+    const a = lista.find(x => String(x.id) === String(id));
     if (a) { a.confirmacoes++; saveAlertas(lista); }
   }
   renderFeed();
@@ -485,19 +525,19 @@ async function initRecursos() {
   data.forEach(r => { const c = r.categoria || 'Outros'; (cats[c] = cats[c] || []).push(r); });
   document.getElementById('recursosBackend').innerHTML = Object.entries(cats).map(([cat, items]) => `
     <div class="card">
-     <h2><i class="fa-solid fa-link"></i> ${escapeHTML(cat)}</h2>
+      <h2><i class="fa-solid fa-link"></i> ${escapeHTML(cat)}</h2>
       <div class="resource-grid">
         ${items.map(r => {
-         const url = safeHttpUrl(r.link);
-         const tag  = url ? 'a' : 'div';
-         const href = url ? ` href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer"` : '';
-         return `<${tag}${href} class="resource-card${url ? '' : ' no-cursor'}">
-           <span class="rc-icon"><i class="fa-solid fa-circle-info"></i></span>
-           <strong>${escapeHTML(r.titulo)}</strong>
-           ${r.descricao ? `<span>${escapeHTML(r.descricao)}</span>` : ''}
-           <span class="rc-badge">${escapeHTML(cat)}</span>
-         </${tag}>`;
-       }).join('')}
+          const url = safeHttpUrl(r.link);
+          const tag  = url ? 'a' : 'div';
+          const href = url ? ` href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer"` : '';
+          return `<${tag}${href} class="resource-card${url ? '' : ' no-cursor'}">
+            <span class="rc-icon"><i class="fa-solid fa-circle-info"></i></span>
+            <strong>${escapeHTML(r.titulo)}</strong>
+            ${r.descricao ? `<span>${escapeHTML(r.descricao)}</span>` : ''}
+            <span class="rc-badge">${escapeHTML(cat)}</span>
+          </${tag}>`;
+        }).join('')}
       </div>
     </div>`).join('');
 }
