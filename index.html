@@ -210,13 +210,13 @@
       <div class="mood-wrap">
         <p class="mood-label" id="moodLabel">Como você está se sentindo agora?</p>
         <div class="mood-row" id="moodRow" role="group" aria-labelledby="moodLabel">
-          <button type="button" class="mood-btn" data-mood="triste" aria-label="Triste" title="Triste">😢</button>
-          <button type="button" class="mood-btn" data-mood="com raiva" aria-label="Com raiva" title="Com raiva">😡</button>
-          <button type="button" class="mood-btn" data-mood="com medo" aria-label="Com medo" title="Com medo">😨</button>
-          <button type="button" class="mood-btn" data-mood="perdida/o" aria-label="Perdida/o" title="Perdida/o">😶‍🌫️</button>
-          <button type="button" class="mood-btn" data-mood="envergonhada/o" aria-label="Envergonhada/o" title="Envergonhada/o">😳</button>
-          <button type="button" class="mood-btn" data-mood="aliviada/o" aria-label="Aliviada/o" title="Aliviada/o">😮‍💨</button>
-          <button type="button" class="mood-btn" data-mood="esperançosa/o" aria-label="Esperançosa/o" title="Esperançosa/o">🌱</button>
+          <button type="button" class="mood-btn" data-mood="triste" aria-label="Triste" aria-pressed="false" title="Triste">😢</button>
+          <button type="button" class="mood-btn" data-mood="com raiva" aria-label="Com raiva" aria-pressed="false" title="Com raiva">😡</button>
+          <button type="button" class="mood-btn" data-mood="com medo" aria-label="Com medo" aria-pressed="false" title="Com medo">😨</button>
+          <button type="button" class="mood-btn" data-mood="perdida/o" aria-label="Perdida/o" aria-pressed="false" title="Perdida/o">😶‍🌫️</button>
+          <button type="button" class="mood-btn" data-mood="envergonhada/o" aria-label="Envergonhada/o" aria-pressed="false" title="Envergonhada/o">😳</button>
+          <button type="button" class="mood-btn" data-mood="aliviada/o" aria-label="Aliviada/o" aria-pressed="false" title="Aliviada/o">😮‍💨</button>
+          <button type="button" class="mood-btn" data-mood="esperançosa/o" aria-label="Esperançosa/o" aria-pressed="false" title="Esperançosa/o">🌱</button>
         </div>
       </div>
 
@@ -226,7 +226,7 @@
         oninput="updateCharCount(this,'desabafoCount',2000)" maxlength="2000"></textarea>
       <div class="char-count"><span id="desabafoCount">0</span>/2000 caracteres</div>
 
-      <div id="moodFeedback" class="alert alert-info mt-14 is-hidden">
+      <div id="moodFeedback" class="alert alert-info mt-14 is-hidden" aria-live="polite">
         <span><i class="fa-solid fa-lightbulb"></i></span>
         <span id="moodFeedbackText"></span>
       </div>

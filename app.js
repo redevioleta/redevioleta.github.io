@@ -12,8 +12,9 @@ function escapeHTML(value) {
 }
 
 function safeHttpUrl(value) {
+  if (typeof value !== 'string' || !value.trim()) return '';
   try {
-    const url = new URL(String(value), window.location.href);
+    const url = new URL(value, window.location.href);
     return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
   } catch {
     return '';
@@ -90,8 +91,12 @@ const moodMessages = {
 document.getElementById('moodRow').addEventListener('click', e => {
   const btn = e.target.closest('.mood-btn');
   if (!btn) return;
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.setAttribute('aria-pressed', 'false');
+  });
   btn.classList.add('selected');
+  btn.setAttribute('aria-pressed', 'true');
   const mood = btn.dataset.mood;
   const fb = document.getElementById('moodFeedback');
   document.getElementById('moodFeedbackText').textContent = moodMessages[mood] || '';
@@ -329,7 +334,7 @@ function _paintFeed(lista) {
   });
   vazio.classList.toggle('is-hidden', filtrados.length > 0);
   feed.innerHTML = filtrados.map(a => `
-    <div class="alerta-card urgencia-borda-${urgenciaClass[a.urgencia] ? a.urgencia : 'media'}">
+    <div class="alerta-card urgencia-borda-${['alta', 'media', 'baixa'].includes(a.urgencia) ? a.urgencia : 'media'}">
       <div class="alerta-header">
         <span class="alerta-tipo">${escapeHTML(a.tipo)}</span>
         <span class="urgencia-tag ${urgenciaClass[a.urgencia] || urgenciaClass.media}">
@@ -344,7 +349,7 @@ function _paintFeed(lista) {
       <div class="alerta-footer">
         <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
         <button class="alerta-confirmar" data-alert-id="${escapeHTML(a.id)}" aria-label="Confirmar alerta">
-          <i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">${a.confirmacoes}</span>
+          <i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">${escapeHTML(a.confirmacoes)}</span>
         </button>
       </div>
     </div>`).join('');
@@ -486,7 +491,7 @@ async function initRecursos() {
          const url = safeHttpUrl(r.link);
          const tag  = url ? 'a' : 'div';
          const href = url ? ` href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer"` : '';
-         return `<${tag}${href} class="resource-card${r.link ? '' : ' no-cursor'}">
+         return `<${tag}${href} class="resource-card${url ? '' : ' no-cursor'}">
            <span class="rc-icon"><i class="fa-solid fa-circle-info"></i></span>
            <strong>${escapeHTML(r.titulo)}</strong>
            ${r.descricao ? `<span>${escapeHTML(r.descricao)}</span>` : ''}
@@ -612,8 +617,9 @@ async function initMap() {
   }
 
   delegaciasData.forEach(d => {
+    const telephone = String(d.tel || '');
     const popup = `<strong>${escapeHTML(d.name)}</strong><br>${escapeHTML(d.end)}<br>
-      <a href="tel:${d.tel.replace(/\D/g,'')}" style="color:#7b2d8b;font-weight:700">${d.tel}</a>`;
+      <a href="tel:${telephone.replace(/\D/g,'')}" style="color:#7b2d8b;font-weight:700">${escapeHTML(telephone)}</a>`;
     L.marker([d.lat, d.lng], { icon: deamIcon }).bindPopup(popup).addTo(markersLayer);
   });
   markersLayer.addTo(leafletMap);
