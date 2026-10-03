@@ -1,6 +1,25 @@
 /* ── Navegação de abas ── */
 const TAB_MAP = { desabafo: 0, identificar: 1, quiz: 2, recursos: 3, faq: 4, alertas: 5 };
 
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[character]);
+}
+
+function safeHttpUrl(value) {
+  try {
+    const url = new URL(String(value), window.location.href);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
 /* ── Backend ── */
 const API_BASE = window.REDE_VIOLETA_API_BASE || (
   window.location.hostname === 'redevioleta.github.io'
@@ -97,7 +116,7 @@ async function enviarDesabafo() {
     body: JSON.stringify({ descricao_situacao: txt }),
   });
   if (classif?.resultado) {
-    classifEl.innerHTML = `<span><i class="fa-solid fa-robot"></i></span><span>${classif.resultado}</span>`;
+    classifEl.innerHTML = `<span><i class="fa-solid fa-robot"></i></span><span>${escapeHTML(classif.resultado)}</span>`;
     classifEl.classList.remove('is-hidden');
     document.getElementById('btnFormalizar').classList.remove('is-hidden');
   }
@@ -306,25 +325,25 @@ function _paintFeed(lista) {
   const filtrados = lista.filter(a => {
     if (filtroAtivo === 'todos')    return true;
     if (filtroAtivo === '__alta__') return a.urgencia === 'alta';
-    return a.tipo.toLowerCase().includes(filtroAtivo.toLowerCase());
+    return String(a.tipo || '').toLowerCase().includes(filtroAtivo.toLowerCase());
   });
   vazio.classList.toggle('is-hidden', filtrados.length > 0);
   feed.innerHTML = filtrados.map(a => `
-    <div class="alerta-card urgencia-borda-${a.urgencia}">
+    <div class="alerta-card urgencia-borda-${urgenciaClass[a.urgencia] ? a.urgencia : 'media'}">
       <div class="alerta-header">
-        <span class="alerta-tipo">${a.tipo}</span>
-        <span class="urgencia-tag ${urgenciaClass[a.urgencia]}">
-          <i class="fa-solid fa-circle"></i> ${urgenciaLabel[a.urgencia]}
+        <span class="alerta-tipo">${escapeHTML(a.tipo)}</span>
+        <span class="urgencia-tag ${urgenciaClass[a.urgencia] || urgenciaClass.media}">
+          <i class="fa-solid fa-circle"></i> ${urgenciaLabel[a.urgencia] || urgenciaLabel.media}
         </span>
       </div>
       <div class="alerta-local">
         <i class="fa-solid fa-location-dot"></i>
-        <strong>${a.cidade}, ${a.uf}</strong>${a.local ? ` — ${a.local}` : ''}
+        <strong>${escapeHTML(a.cidade)}, ${escapeHTML(a.uf)}</strong>${a.local ? ` — ${escapeHTML(a.local)}` : ''}
       </div>
-      <p class="alerta-desc">${a.desc}</p>
+      <p class="alerta-desc">${escapeHTML(a.desc)}</p>
       <div class="alerta-footer">
         <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
-        <button class="alerta-confirmar" onclick="confirmarAlerta(${typeof a.id === 'string' ? `'${a.id}'` : a.id})" aria-label="Confirmar alerta">
+        <button class="alerta-confirmar" data-alert-id="${escapeHTML(a.id)}" aria-label="Confirmar alerta">
           <i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">${a.confirmacoes}</span>
         </button>
       </div>
@@ -443,8 +462,8 @@ async function initTimeline() {
       return `<div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">${year}</div>
-        <div class="tl-title">${e.titulo}</div>
-        ${e.descricao ? `<div class="tl-desc">${e.descricao}</div>` : ''}
+        <div class="tl-title">${escapeHTML(e.titulo)}</div>
+        ${e.descricao ? `<div class="tl-desc">${escapeHTML(e.descricao)}</div>` : ''}
       </div>`;
     }).join('');
   document.getElementById('timelineCard').classList.remove('is-hidden');
@@ -461,18 +480,19 @@ async function initRecursos() {
   data.forEach(r => { const c = r.categoria || 'Outros'; (cats[c] = cats[c] || []).push(r); });
   document.getElementById('recursosBackend').innerHTML = Object.entries(cats).map(([cat, items]) => `
     <div class="card">
-      <h2><i class="fa-solid fa-link"></i> ${cat}</h2>
+     <h2><i class="fa-solid fa-link"></i> ${escapeHTML(cat)}</h2>
       <div class="resource-grid">
         ${items.map(r => {
-          const tag  = r.link ? 'a' : 'div';
-          const href = r.link ? ` href="${r.link}" target="_blank" rel="noopener"` : '';
-          return `<${tag}${href} class="resource-card${r.link ? '' : ' no-cursor'}">
-            <span class="rc-icon"><i class="fa-solid fa-circle-info"></i></span>
-            <strong>${r.titulo}</strong>
-            ${r.descricao ? `<span>${r.descricao}</span>` : ''}
-            <span class="rc-badge">${cat}</span>
-          </${tag}>`;
-        }).join('')}
+         const url = safeHttpUrl(r.link);
+         const tag  = url ? 'a' : 'div';
+         const href = url ? ` href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer"` : '';
+         return `<${tag}${href} class="resource-card${r.link ? '' : ' no-cursor'}">
+           <span class="rc-icon"><i class="fa-solid fa-circle-info"></i></span>
+           <strong>${escapeHTML(r.titulo)}</strong>
+           ${r.descricao ? `<span>${escapeHTML(r.descricao)}</span>` : ''}
+           <span class="rc-badge">${escapeHTML(cat)}</span>
+         </${tag}>`;
+       }).join('')}
       </div>
     </div>`).join('');
 }
@@ -489,12 +509,12 @@ async function initFAQ() {
     data
       .sort((a, b) => a.ordem - b.ordem)
       .map(f => `
-        <div class="acc-item faq-item" data-text="${f.pergunta.toLowerCase()}">
+        <div class="acc-item faq-item" data-text="${escapeHTML(String(f.pergunta || '').toLowerCase())}">
           <button class="acc-header" onclick="toggleAcc(this)">
-            <span class="acc-icon"><i class="fa-solid fa-circle-question"></i></span> ${f.pergunta}
+            <span class="acc-icon"><i class="fa-solid fa-circle-question"></i></span> ${escapeHTML(f.pergunta)}
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><p>${f.resposta}</p></div>
+          <div class="acc-body"><p>${escapeHTML(f.resposta)}</p></div>
         </div>`).join('')
   );
 }
@@ -592,7 +612,7 @@ async function initMap() {
   }
 
   delegaciasData.forEach(d => {
-    const popup = `<strong>${d.name}</strong><br>${d.end}<br>
+    const popup = `<strong>${escapeHTML(d.name)}</strong><br>${escapeHTML(d.end)}<br>
       <a href="tel:${d.tel.replace(/\D/g,'')}" style="color:#7b2d8b;font-weight:700">${d.tel}</a>`;
     L.marker([d.lat, d.lng], { icon: deamIcon }).bindPopup(popup).addTo(markersLayer);
   });
@@ -615,4 +635,13 @@ function switchMapTab(mode) {
 }
 
 /* popula o feed na carga inicial sem esperar clique na aba */
-document.addEventListener('DOMContentLoaded', () => renderFeed());
+document.addEventListener('DOMContentLoaded', () => {
+  const feed = document.getElementById('alertaFeed');
+  feed?.addEventListener('click', event => {
+    const button = event.target.closest('[data-alert-id]');
+    if (!button) return;
+    const id = button.dataset.alertId;
+    confirmarAlerta(/^\d+$/.test(id) ? Number(id) : id);
+  });
+  renderFeed();
+});
