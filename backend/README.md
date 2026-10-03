@@ -1,19 +1,22 @@
 # Fala Segura — Backend (FastAPI)
+
 Backend do site Fala Segura, campanha Agosto Lilás, com apoio e
 conscientização sobre assédio e violência contra a mulher.
+
 ## Estrutura
+
 app/
-main.py              
+main.py
 core/
-config.py       
+config.py
 db/
-database.py     
+database.py
 models/
-models.py      
+models.py
 schemas/
-schemas.py      
+schemas.py
 api/
-api.py            
+api.py
 routes/
 desabafos.py
 assedio.py
@@ -24,11 +27,15 @@ faq.py
 timeline.py
 delegacias.py
 alertas.py
-services/            
+chat.py
+services/
+
 Cada aba do site virou um módulo de rota próprio — fica fácil de mexer
 em uma parte sem afetar as outras, e cada pessoa consegue trabalhar
 num arquivo diferente sem conflito.
+
 ## Como rodar
+
 python -m venv venv
 source venv/bin/activate  
 pip install -r requirements.txt
@@ -36,29 +43,8 @@ uvicorn app.main:app --reload
 A API sobe em `http://localhost:8000`. A documentação interativa
 (Swagger) fica automaticamente em `http://localhost:8000/docs`.
 
-## Assistente com Gemini
-
-O chat usa a API do Gemini pelo backend; a chave nunca deve ser colocada no
-HTML ou no JavaScript público. Configure `GEMINI_API_KEY` nas variáveis de
-ambiente do serviço que executa o backend (por exemplo, em **Environment** no
-Render). O blueprint em `render.yaml` solicita essa chave como um segredo ao
-configurar o serviço. Opcionalmente, altere `GEMINI_MODEL` para escolher outro
-modelo disponível na sua conta; o padrão é `gemini-2.5-flash`.
-
-O endpoint `/health` informa `gemini_configured: true` quando a chave está
-disponível no processo do backend; ele nunca retorna a chave.
-
-O frontend no GitHub Pages usa por padrão
-`https://rede-violeta.onrender.com/api/v1`, correspondente ao serviço declarado
-em `render.yaml`. Se o backend estiver em outro endereço, defina
-`window.REDE_VIOLETA_API_BASE` antes de carregar `app.js` com a URL base da API
-terminando em `/api/v1`.
-
-O chat mantém o histórico apenas na memória da página e envia as mensagens à
-Google para gerar as respostas. Não compartilhe dados pessoais ou informações
-que possam identificar alguém.
-
 ## Sobre o banco de dados
+
 Por padrão o projeto está configurado para usar **SQLite local**
 (`fala_segura.db`), só para você já poder rodar e testar a API sem
 depender de nada externo.
@@ -79,7 +65,37 @@ o banco de verdade, os pontos de integração são:
 Nada na lógica das rotas depende de SQLite especificamente — trocar
 o banco é basicamente trocar a `database_url` e ajustar os models.
 
+## Violeta IA (chat com IA generativa)
+
+A rota `POST /api/v1/chat/` conecta o chat "Violeta" a uma IA generativa
+compatível com a API da OpenAI (OpenAI, Groq, OpenRouter etc.). Também
+mantém suporte à chave `GEMINI_API_KEY` já usada pelo serviço Render:
+nesse caso, usa a API compatível com OpenAI do Gemini. Para configurar
+outro provedor, crie um arquivo `.env` em `backend/` com:
+
+```env
+OPENAI_API_KEY=sua-chave-aqui
+# Opcionais (têm valor padrão):
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Se nenhuma chave estiver definida (ou a chamada à IA falhar por
+qualquer motivo — sem internet, chave inválida, timeout, etc.), o
+backend cai automaticamente para respostas locais por palavra-chave,
+então o chat continua funcionando mesmo sem IA configurada.
+
+Em mensagens com sinais de perigo imediato (ex.: "socorro", "ele está
+aqui", "ameaça"), a resposta de segurança (190/180) é sempre gerada
+localmente, sem depender da IA externa — por segurança, essa parte
+nunca é delegada ao modelo de linguagem.
+
+Nenhuma mensagem de chat é salva no banco de dados: o histórico de
+conversa trafega apenas dentro da própria requisição (enviado pelo
+frontend) e não é persistido no servidor.
+
 ## Próximos passos sugeridos
+
 Autenticação (se for necessário login para alguma aba, tipo admin
   de denúncias)
 Popular `recursos`, `faq`, `linha_do_tempo` e `delegacias` com dados
