@@ -1,26 +1,6 @@
 /* ── Navegação de abas ── */
 const TAB_MAP = { desabafo: 0, identificar: 1, quiz: 2, recursos: 3, faq: 4, alertas: 5 };
 
-function escapeHTML(value) {
-  return String(value ?? '').replace(/[&<>"']/g, character => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  })[character]);
-}
-
-function safeHttpUrl(value) {
-  if (typeof value !== 'string' || !value.trim()) return '';
-  try {
-    const url = new URL(value, window.location.href);
-    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
-  } catch {
-    return '';
-  }
-}
-
 /* ── Backend ── */
 const API_BASE = window.REDE_VIOLETA_API_BASE || (
   window.location.hostname.endsWith('.github.io')
@@ -59,10 +39,7 @@ function switchTab(tab) {
     btns[idx].classList.add('active');
     btns[idx].setAttribute('aria-selected', 'true');
   }
-  window.scrollTo({
-    top: 0,
-    behavior: document.body.classList.contains('a11y-reduce-motion') ? 'auto' : 'smooth',
-  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (tab === 'identificar' && !mapInitialized) setTimeout(initMap, 120);
   if (tab === 'identificar') initTimeline();
   if (tab === 'recursos')    initRecursos();
@@ -101,12 +78,8 @@ const moodMessages = {
 document.getElementById('moodRow').addEventListener('click', e => {
   const btn = e.target.closest('.mood-btn');
   if (!btn) return;
-  document.querySelectorAll('.mood-btn').forEach(b => {
-    b.classList.remove('selected');
-    b.setAttribute('aria-pressed', 'false');
-  });
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
-  btn.setAttribute('aria-pressed', 'true');
   const mood = btn.dataset.mood;
   const fb = document.getElementById('moodFeedback');
   document.getElementById('moodFeedbackText').textContent = textoNoIdioma(moodMessages[mood] || '');
@@ -139,7 +112,7 @@ async function enviarDesabafo() {
     body: JSON.stringify({ descricao_situacao: txt }),
   });
   if (classif?.resultado) {
-    classifEl.innerHTML = `<span><i class="fa-solid fa-robot"></i></span><span>${escapeHTML(classif.resultado)}</span>`;
+    classifEl.innerHTML = `<span><i class="fa-solid fa-robot"></i></span><span>${classif.resultado}</span>`;
     classifEl.classList.remove('is-hidden');
     document.getElementById('btnFormalizar').classList.remove('is-hidden');
   }
@@ -148,10 +121,7 @@ async function enviarDesabafo() {
 function limparDesabafo() {
   document.getElementById('desabafoText').value = '';
   document.getElementById('desabafoCount').textContent = '0';
-  document.querySelectorAll('.mood-btn').forEach(b => {
-    b.classList.remove('selected');
-    b.setAttribute('aria-pressed', 'false');
-  });
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('moodFeedback').style.display = 'none';
 }
 
@@ -367,32 +337,29 @@ function _paintFeed(lista) {
   const filtrados = lista.filter(a => {
     if (filtroAtivo === 'todos')    return true;
     if (filtroAtivo === '__alta__') return a.urgencia === 'alta';
-    return String(a.tipo || '').toLowerCase().includes(filtroAtivo.toLowerCase());
+    return a.tipo.toLowerCase().includes(filtroAtivo.toLowerCase());
   });
   vazio.classList.toggle('is-hidden', filtrados.length > 0);
-  feed.innerHTML = filtrados.map(a => {
-    const urgencia = ['alta', 'media', 'baixa'].includes(a.urgencia) ? a.urgencia : 'media';
-    return `
-    <div class="alerta-card urgencia-borda-${urgencia}">
+  feed.innerHTML = filtrados.map(a => `
+    <div class="alerta-card urgencia-borda-${a.urgencia}">
       <div class="alerta-header">
-        <span class="alerta-tipo">${escapeHTML(textoNoIdioma(a.tipo))}</span>
-        <span class="urgencia-tag ${urgenciaClass[urgencia]}">
-          <i class="fa-solid fa-circle"></i> ${urgenciaLabel[urgencia]}
+        <span class="alerta-tipo">${textoNoIdioma(a.tipo)}</span>
+        <span class="urgencia-tag ${urgenciaClass[a.urgencia]}">
+          <i class="fa-solid fa-circle"></i> ${urgenciaLabel[a.urgencia]}
         </span>
       </div>
       <div class="alerta-local">
         <i class="fa-solid fa-location-dot"></i>
-        <strong>${escapeHTML(a.cidade)}, ${escapeHTML(a.uf)}</strong>${a.local ? ` — ${escapeHTML(a.local)}` : ''}
+        <strong>${a.cidade}, ${a.uf}</strong>${a.local ? ` — ${a.local}` : ''}
       </div>
-      <p class="alerta-desc">${escapeHTML(a.desc)}</p>
+      <p class="alerta-desc">${a.desc}</p>
       <div class="alerta-footer">
-        <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${escapeHTML(timeAgo(a.ts))}</span>
-        <button class="alerta-confirmar" data-alert-id="${escapeHTML(a.id)}" aria-label="Confirmar alerta">
-          <i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">${escapeHTML(a.confirmacoes)}</span>
+        <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
+        <button class="alerta-confirmar" onclick="confirmarAlerta(${typeof a.id === 'string' ? `'${a.id}'` : a.id})" aria-label="Confirmar alerta">
+          <i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">${a.confirmacoes}</span>
         </button>
       </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
 function _mapBackendAlerta(a) {
@@ -448,7 +415,7 @@ async function confirmarAlerta(id) {
     await apiFetch(`/alertas/${numId}/confirmar`, { method: 'PATCH' });
   } else {
     const lista = loadAlertas();
-    const a = lista.find(x => String(x.id) === String(id));
+    const a = lista.find(x => x.id === id);
     if (a) { a.confirmacoes++; saveAlertas(lista); }
   }
   renderFeed();
@@ -507,8 +474,8 @@ async function initTimeline() {
       return `<div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">${year}</div>
-        <div class="tl-title">${escapeHTML(e.titulo)}</div>
-        ${e.descricao ? `<div class="tl-desc">${escapeHTML(e.descricao)}</div>` : ''}
+        <div class="tl-title">${e.titulo}</div>
+        ${e.descricao ? `<div class="tl-desc">${e.descricao}</div>` : ''}
       </div>`;
     }).join('');
   document.getElementById('timelineCard').classList.remove('is-hidden');
@@ -525,17 +492,16 @@ async function initRecursos() {
   data.forEach(r => { const c = r.categoria || 'Outros'; (cats[c] = cats[c] || []).push(r); });
   document.getElementById('recursosBackend').innerHTML = Object.entries(cats).map(([cat, items]) => `
     <div class="card">
-      <h2><i class="fa-solid fa-link"></i> ${escapeHTML(cat)}</h2>
+      <h2><i class="fa-solid fa-link"></i> ${cat}</h2>
       <div class="resource-grid">
         ${items.map(r => {
-          const url = safeHttpUrl(r.link);
-          const tag  = url ? 'a' : 'div';
-          const href = url ? ` href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer"` : '';
-          return `<${tag}${href} class="resource-card${url ? '' : ' no-cursor'}">
+          const tag  = r.link ? 'a' : 'div';
+          const href = r.link ? ` href="${r.link}" target="_blank" rel="noopener"` : '';
+          return `<${tag}${href} class="resource-card${r.link ? '' : ' no-cursor'}">
             <span class="rc-icon"><i class="fa-solid fa-circle-info"></i></span>
-            <strong>${escapeHTML(r.titulo)}</strong>
-            ${r.descricao ? `<span>${escapeHTML(r.descricao)}</span>` : ''}
-            <span class="rc-badge">${escapeHTML(cat)}</span>
+            <strong>${r.titulo}</strong>
+            ${r.descricao ? `<span>${r.descricao}</span>` : ''}
+            <span class="rc-badge">${cat}</span>
           </${tag}>`;
         }).join('')}
       </div>
@@ -554,12 +520,12 @@ async function initFAQ() {
     data
       .sort((a, b) => a.ordem - b.ordem)
       .map(f => `
-        <div class="acc-item faq-item" data-text="${escapeHTML(String(f.pergunta || '').toLowerCase())}">
+        <div class="acc-item faq-item" data-text="${f.pergunta.toLowerCase()}">
           <button class="acc-header" onclick="toggleAcc(this)">
-            <span class="acc-icon"><i class="fa-solid fa-circle-question"></i></span> ${escapeHTML(f.pergunta)}
+            <span class="acc-icon"><i class="fa-solid fa-circle-question"></i></span> ${f.pergunta}
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><p>${escapeHTML(f.resposta)}</p></div>
+          <div class="acc-body"><p>${f.resposta}</p></div>
         </div>`).join('')
   );
 }
@@ -657,9 +623,8 @@ async function initMap() {
   }
 
   delegaciasData.forEach(d => {
-    const telephone = String(d.tel || '');
-    const popup = `<strong>${escapeHTML(d.name)}</strong><br>${escapeHTML(d.end)}<br>
-      <a href="tel:${telephone.replace(/\D/g,'')}" style="color:#7b2d8b;font-weight:700">${escapeHTML(telephone)}</a>`;
+    const popup = `<strong>${d.name}</strong><br>${d.end}<br>
+      <a href="tel:${d.tel.replace(/\D/g,'')}" style="color:#7b2d8b;font-weight:700">${d.tel}</a>`;
     L.marker([d.lat, d.lng], { icon: deamIcon }).bindPopup(popup).addTo(markersLayer);
   });
   markersLayer.addTo(leafletMap);
@@ -681,13 +646,4 @@ function switchMapTab(mode) {
 }
 
 /* popula o feed na carga inicial sem esperar clique na aba */
-document.addEventListener('DOMContentLoaded', () => {
-  const feed = document.getElementById('alertaFeed');
-  feed?.addEventListener('click', event => {
-    const button = event.target.closest('[data-alert-id]');
-    if (!button) return;
-    const id = button.dataset.alertId;
-    confirmarAlerta(/^\d+$/.test(id) ? Number(id) : id);
-  });
-  renderFeed();
-});
+document.addEventListener('DOMContentLoaded', () => renderFeed());
