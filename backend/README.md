@@ -68,10 +68,9 @@ o banco é basicamente trocar a `database_url` e ajustar os models.
 ## Violeta IA (chat com IA generativa)
 
 A rota `POST /api/v1/chat/` conecta o chat "Violeta" a uma IA generativa
-compatível com a API da OpenAI (OpenAI, Groq, OpenRouter etc.). Também
-mantém suporte à chave `GEMINI_API_KEY` já usada pelo serviço Render:
-nesse caso, usa a API compatível com OpenAI do Gemini. Para configurar
-outro provedor, crie um arquivo `.env` em `backend/` com:
+real, compatível com a API da OpenAI (funciona com OpenAI, Groq,
+OpenRouter, etc.). Para ativar, crie um arquivo `.env` em `backend/`
+com:
 
 ```env
 OPENAI_API_KEY=sua-chave-aqui
@@ -80,7 +79,7 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-Se nenhuma chave estiver definida (ou a chamada à IA falhar por
+Se `OPENAI_API_KEY` não estiver definida (ou a chamada à IA falhar por
 qualquer motivo — sem internet, chave inválida, timeout, etc.), o
 backend cai automaticamente para respostas locais por palavra-chave,
 então o chat continua funcionando mesmo sem IA configurada.
@@ -89,6 +88,17 @@ Em mensagens com sinais de perigo imediato (ex.: "socorro", "ele está
 aqui", "ameaça"), a resposta de segurança (190/180) é sempre gerada
 localmente, sem depender da IA externa — por segurança, essa parte
 nunca é delegada ao modelo de linguagem.
+
+Além do acolhimento geral, a Violeta IA foi instruída (e o fallback
+local também cobre, nos três idiomas) a explicar:
+
+- os tipos de violência previstos na Lei Maria da Penha (física,
+  psicológica, sexual, patrimonial, moral);
+- o passo a passo para denunciar (190, 180, DEAM/Boletim de Ocorrência,
+  Defensoria Pública/medida protetiva, IML);
+- como reunir e guardar provas (prints, fotos, áudios, testemunhas);
+- como ajudar uma pessoa próxima que esteja sofrendo violência, sem
+  julgamento e sem colocar ninguém em risco.
 
 Nenhuma mensagem de chat é salva no banco de dados: o histórico de
 conversa trafega apenas dentro da própria requisição (enviado pelo
