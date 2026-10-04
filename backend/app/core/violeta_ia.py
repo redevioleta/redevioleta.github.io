@@ -37,17 +37,60 @@ SYSTEM_PROMPT = (
     "isso claro sempre que fizer sentido.\n"
     "- Nunca prometa resolver a situação da pessoa sozinha; incentive "
     "buscar apoio humano e canais oficiais.\n"
-    "- Pode: explicar tipos de violência (física, psicológica, sexual, "
-    "patrimonial, moral); informar sobre direitos (ex.: Lei Maria da "
-    "Penha, medidas protetivas); ajudar a pessoa a organizar o que "
-    "deseja contar a alguém de confiança; indicar canais oficiais "
-    "(Ligue 180, Disque 100, Polícia 190, DEAM, Defensoria Pública).\n"
     "- Se perceber qualquer sinal de risco iminente, reforce IMEDIATAMENTE "
     "a importância de buscar um local seguro e ligar 190, antes de "
     "qualquer outra orientação.\n"
     "- Nunca minimize, julgue ou duvide do relato da pessoa.\n"
     "- Responda no idioma solicitado pela pessoa, em tom acolhedor, claro "
-    "e objetivo (no máximo 4-5 frases por resposta)."
+    "e objetivo (no máximo 4-5 frases por resposta).\n\n"
+    "Tópicos que você deve saber explicar quando perguntada:\n\n"
+    "1) TIPOS DE VIOLÊNCIA (Lei Maria da Penha, art. 7º):\n"
+    "   - Física: qualquer conduta que ofenda a integridade/saúde "
+    "corporal (empurrões, tapas, socos, espancamento).\n"
+    "   - Psicológica: humilhação, ameaça, manipulação, isolamento de "
+    "amigos/família, controle excessivo, chantagem emocional.\n"
+    "   - Sexual: forçar/constranger a presenciar, manter ou participar "
+    "de relação sexual não desejada, impedir uso de método "
+    "contraceptivo, forçar casamento ou prostituição.\n"
+    "   - Patrimonial: destruir, reter ou subtrair bens, documentos, "
+    "valores ou instrumentos de trabalho da mulher.\n"
+    "   - Moral: calúnia, difamação ou injúria (ex.: espalhar mentiras "
+    "ou xingamentos ofensivos sobre a mulher).\n\n"
+    "2) PASSO A PASSO PARA DENUNCIAR:\n"
+    "   a. Se houver perigo imediato, ligar 190 (Polícia Militar) "
+    "primeiro.\n"
+    "   b. Ligar 180 (Central de Atendimento à Mulher, gratuito e 24h) "
+    "para orientação e encaminhamento, mesmo sem saber se quer "
+    "denunciar formalmente ainda.\n"
+    "   c. Ir a uma DEAM (Delegacia Especializada de Atendimento à "
+    "Mulher) ou delegacia comum (se não houver DEAM na região) para "
+    "registrar Boletim de Ocorrência; se possível, levar documentos, "
+    "prints de mensagens, fotos de lesões ou testemunhas.\n"
+    "   d. Buscar a Defensoria Pública (gratuita) ou um advogado para "
+    "solicitar medida protetiva de urgência, que pode incluir "
+    "afastamento do agressor e proibição de contato.\n"
+    "   e. Procurar o IML (Instituto Médico Legal) para exame de corpo "
+    "de delito quando houver violência física ou sexual — isso ajuda "
+    "a reunir provas.\n"
+    "   f. Guardar e organizar provas com segurança (prints, áudios, "
+    "fotos, testemunhas), sem se colocar em risco para obtê-las.\n\n"
+    "3) COMO AJUDAR ALGUÉM PRÓXIMO QUE ESTÁ SOFRENDO VIOLÊNCIA:\n"
+    "   - Escutar sem julgar, sem pressionar a pessoa a tomar decisões "
+    "imediatas e sem culpabilizá-la pela situação.\n"
+    "   - Acreditar no relato e validar os sentimentos dela.\n"
+    "   - Ajudar a planejar a segurança (ex.: ter uma mala/documentos "
+    "prontos, saber para onde ir em caso de fuga, combinar uma palavra "
+    "ou sinal de emergência).\n"
+    "   - Oferecer-se para acompanhar a uma delegacia, ao 180 ou à "
+    "Defensoria, se ela quiser.\n"
+    "   - Nunca confrontar o agressor diretamente nem compartilhar a "
+    "situação sem autorização da pessoa — isso pode colocá-la em mais "
+    "risco.\n"
+    "   - Em caso de risco iminente observado por quem pergunta, "
+    "orientar a ligar 190 imediatamente.\n\n"
+    "Use esse conhecimento para responder de forma prática e acolhedora, "
+    "sempre lembrando que você complementa, mas não substitui, o "
+    "atendimento humano especializado."
 )
 
 AVISO_SEGURANCA = (
@@ -76,6 +119,28 @@ _RESPOSTA_PADRAO = (
 )
 
 _REGRAS = (
+    (("passo a passo", "como denunciar", "como denuncio", "boletim de ocorrência",
+      "boletim de ocorrencia", "registrar ocorrência", "registrar ocorrencia"),
+     "Passo a passo para denunciar: 1) em perigo imediato, ligue 190; "
+     "2) ligue 180 para orientação gratuita 24h; 3) vá a uma DEAM (ou "
+     "delegacia comum) para registrar o Boletim de Ocorrência, levando "
+     "provas se tiver (prints, fotos, testemunhas); 4) procure a "
+     "Defensoria Pública para pedir medida protetiva; 5) se houve "
+     "violência física/sexual, procure o IML para exame de corpo de "
+     "delito."),
+    (("ajudar amiga", "ajudar uma amiga", "ajudar minha", "amiga sofre",
+      "como ajudar alguém", "como ajudar alguem"),
+     "Para ajudar alguém próxima: escute sem julgar e acredite no "
+     "relato dela; não a pressione a tomar decisões imediatas; ofereça "
+     "ajuda para ligar no 180 ou ir à delegacia, se ela quiser; ajude a "
+     "planejar a segurança (documentos, para onde ir); e nunca confronte "
+     "o agressor sozinha(o), isso pode colocar as duas em risco."),
+    (("prova", "provas", "medida protetiva", "medidas protetivas"),
+     "Provas úteis incluem prints de mensagens, fotos de lesões, "
+     "áudios e testemunhas — guarde-as com segurança. A medida "
+     "protetiva de urgência pode afastar o agressor e proibir contato; "
+     "para solicitá-la, procure a Defensoria Pública, um advogado ou a "
+     "própria delegacia no momento do boletim de ocorrência."),
     (("180", "denúncia", "denuncia", "orienta"),
      "O Ligue 180 é a Central de Atendimento à Mulher. O serviço é "
      "gratuito e funciona 24 horas. Ele oferece orientação sobre "
@@ -84,10 +149,15 @@ _REGRAS = (
      "A DEAM é a Delegacia Especializada de Atendimento à Mulher. Ela "
      "integra a rede de atendimento especializado. Use a aba Recursos "
      "para encontrar mais informações."),
-    (("violênci", "violenc"),
-     "Violência contra a mulher pode assumir diferentes formas: física, "
-     "psicológica, sexual, patrimonial e moral. Se você estiver vivendo "
-     "isso, procure uma pessoa de confiança ou um serviço especializado."),
+    (("física", "fisica", "psicológica", "psicologica", "sexual",
+      "patrimonial", "moral", "tipos de violênci", "tipos de violenc",
+      "violênci", "violenc"),
+     "Violência contra a mulher pode ser física (agressão ao corpo), "
+     "psicológica (humilhação, ameaça, controle), sexual (relação "
+     "forçada ou constrangimento), patrimonial (destruir/reter bens e "
+     "documentos) ou moral (calúnia, difamação, injúria). Se você "
+     "estiver vivendo isso, procure uma pessoa de confiança ou um "
+     "serviço especializado."),
     (("medo", "sozinha", "triste", "ansio"),
      "Sinto muito que você esteja passando por isso. Você merece ser "
      "ouvida e respeitada. Se for seguro, converse com alguém de "
@@ -131,29 +201,41 @@ def resposta_local(texto: str, idioma: str = "pt") -> str:
     generativa não está configurada ou falha."""
     t = texto.lower()
     if idioma == "en":
+        if any(term in t for term in ("step by step", "how to report", "how do i report", "file a complaint", "police report")):
+            return "Steps to report: 1) if in immediate danger, call 190; 2) call 180 for free 24h guidance; 3) go to a women's police station (or any station) to file a police report, bringing evidence if you have it (screenshots, photos, witnesses); 4) contact the Public Defender's Office to request a protective order; 5) if there was physical/sexual violence, seek a forensic exam."
+        if any(term in t for term in ("help a friend", "help my friend", "how can i help", "support someone")):
+            return "To help someone close to you: listen without judging and believe her; don't pressure her into immediate decisions; offer to help call 180 or go to the police station if she wants; help plan for safety (documents, a safe place to go); and never confront the abuser directly, that can increase the risk."
+        if any(term in t for term in ("evidence", "proof", "protective order", "restraining order")):
+            return "Useful evidence includes message screenshots, photos of injuries, audio recordings and witnesses — keep them safe. A protective order can remove the abuser and ban contact; to request one, contact the Public Defender's Office, a lawyer, or the police station when filing the report."
         if any(term in t for term in ("180", "report", "complaint", "guidance")):
             return "The 180 hotline is Brazil’s Women’s Support Center. It is free and operates 24 hours a day, providing guidance on rights and support services."
         if any(term in t for term in ("police station", "deam")):
             return "A DEAM is a specialized police station for women. Open the Resources tab to find more information about specialized support services."
-        if any(term in t for term in ("violence", "abuse", "harassment")):
-            return "Violence against women can be physical, psychological, sexual, financial, or moral. If this is happening to you, contact someone you trust or a specialized support service."
+        if any(term in t for term in ("physical", "psychological", "sexual", "financial", "moral", "types of violence", "violence", "abuse", "harassment")):
+            return "Violence against women can be physical (bodily harm), psychological (humiliation, threats, control), sexual (forced or non-consensual acts), financial/patrimonial (destroying or withholding assets/documents), or moral (slander, defamation). If this is happening to you, contact someone you trust or a specialized support service."
         if any(term in t for term in ("afraid", "fear", "alone", "sad", "anxious")):
             return "I am sorry you are going through this. You deserve to be heard and respected. If it is safe, talk to someone you trust. In an emergency, call 190."
         if any(term in t for term in ("law", "maria da penha", "right")):
             return "Brazil has specific legislation to protect women, including the Maria da Penha Law. For legal guidance, contact the Public Defender’s Office or a specialized legal service."
-        return "I can help with information about Rede Violeta resources, emergency contacts, types of violence, or ways to seek support. I am Violeta! 💜"
+        return "I can help with information about Rede Violeta resources, emergency contacts, types of violence, how to report, or ways to seek support. I am Violeta! 💜"
     if idioma == "es":
+        if any(term in t for term in ("paso a paso", "cómo denuncio", "como denuncio", "cómo denunciar", "como denunciar")):
+            return "Pasos para denunciar: 1) si hay peligro inmediato, llama al 190; 2) llama al 180 para orientación gratuita 24h; 3) ve a una comisaría especializada (o comisaría común) para registrar la denuncia, llevando pruebas si tienes (capturas de pantalla, fotos, testigos); 4) contacta a la Defensoría Pública para solicitar una medida de protección; 5) si hubo violencia física o sexual, busca un examen médico legal."
+        if any(term in t for term in ("ayudar a una amiga", "cómo puedo ayudar", "como puedo ayudar", "apoyar a alguien")):
+            return "Para ayudar a alguien cercana: escúchala sin juzgar y cree en su relato; no la presiones a tomar decisiones inmediatas; ofrécele ayuda para llamar al 180 o ir a la comisaría si ella quiere; ayúdala a planear su seguridad (documentos, un lugar seguro); y nunca confrontes al agresor directamente, eso puede aumentar el riesgo."
+        if any(term in t for term in ("prueba", "pruebas", "medida de protección", "medida protectiva")):
+            return "Pruebas útiles incluyen capturas de mensajes, fotos de lesiones, audios y testigos — guárdalas con seguridad. La medida de protección puede alejar al agresor y prohibir el contacto; para solicitarla, contacta a la Defensoría Pública, un abogado o la misma comisaría al registrar la denuncia."
         if any(term in t for term in ("180", "denuncia", "orienta")):
             return "La línea 180 es el Centro de Atención a las Mujeres de Brasil. Es gratuita y funciona las 24 horas. Ofrece orientación sobre derechos y servicios de apoyo."
         if any(term in t for term in ("comisaría", "policia", "deam")):
             return "La DEAM es una comisaría especializada en la atención a las mujeres. Consulta la pestaña Recursos para obtener más información sobre los servicios especializados."
-        if any(term in t for term in ("violencia", "acoso", "abuso")):
-            return "La violencia contra las mujeres puede ser física, psicológica, sexual, patrimonial o moral. Si estás viviendo esta situación, busca a alguien de confianza o un servicio especializado."
+        if any(term in t for term in ("física", "psicológica", "sexual", "patrimonial", "moral", "tipos de violencia", "violencia", "acoso", "abuso")):
+            return "La violencia contra las mujeres puede ser física (daño corporal), psicológica (humillación, amenazas, control), sexual (actos forzados o sin consentimiento), patrimonial (destruir o retener bienes/documentos) o moral (calumnia, difamación). Si estás viviendo esta situación, busca a alguien de confianza o un servicio especializado."
         if any(term in t for term in ("miedo", "sola", "triste", "ansio")):
             return "Siento mucho que estés pasando por esto. Mereces que te escuchen y te respeten. Si es seguro, habla con alguien de confianza. En una emergencia, llama al 190."
         if any(term in t for term in ("ley", "maria da penha", "derecho")):
             return "Brasil cuenta con legislación específica para proteger a las mujeres, incluida la Ley Maria da Penha. Para recibir orientación jurídica, contacta con la Defensoría Pública o un servicio especializado."
-        return "Puedo ayudarte con información sobre los recursos de Rede Violeta, teléfonos de emergencia, tipos de violencia o formas de buscar apoyo. ¡Soy Violeta! 💜"
+        return "Puedo ayudarte con información sobre los recursos de Rede Violeta, teléfonos de emergencia, tipos de violencia, cómo denunciar o formas de buscar apoyo. ¡Soy Violeta! 💜"
     for termos, resposta in _REGRAS:
         if any(termo in t for termo in termos):
             return resposta
@@ -164,14 +246,8 @@ async def gerar_resposta_ia(mensagem: str, historico: list[ChatMensagem], idioma
     """Chama um provedor de IA compatível com a API da OpenAI.
     Retorna None se a IA não estiver configurada ou a chamada falhar,
     para que o chamador use o fallback local."""
-    api_key = settings.openai_api_key or settings.gemini_api_key
-    if not api_key:
+    if not settings.ai_enabled:
         return None
-    base_url = settings.openai_base_url
-    model = settings.openai_model
-    if not settings.openai_api_key:
-        base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
-        model = settings.gemini_model
 
     instrucoes_idioma = {
         "pt": "Responda em português do Brasil.",
@@ -187,20 +263,20 @@ async def gerar_resposta_ia(mensagem: str, historico: list[ChatMensagem], idioma
     mensagens.append({"role": "user", "content": mensagem})
 
     payload: dict[str, Any] = {
-        "model": model,
+        "model": settings.openai_model,
         "messages": mensagens,
         "temperature": 0.6,
         "max_tokens": 300,
     }
     headers: dict[str, str] = {
-        "Authorization": f"Bearer {api_key}",
+        "Authorization": f"Bearer {settings.openai_api_key}",
         "Content-Type": "application/json",
     }
 
     try:
         async with httpx.AsyncClient(timeout=settings.openai_timeout_seconds) as client:
             resp = await client.post(
-                f"{base_url.rstrip('/')}/chat/completions",
+                f"{settings.openai_base_url}/chat/completions",
                 json=payload,
                 headers=headers,
             )
