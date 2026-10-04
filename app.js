@@ -353,6 +353,11 @@ function _paintFeed(lista) {
         <strong>${a.cidade}, ${a.uf}</strong>${a.local ? ` — ${a.local}` : ''}
       </div>
       <p class="alerta-desc">${a.desc}</p>
+      ${a.moderado_ia && a.resumo_ia ? `
+      <div class="alerta-ia">
+        <span class="alerta-ia-badge"><i class="fa-solid fa-robot"></i> Moderado pela Violeta IA</span>
+        <p class="alerta-ia-resumo">${a.resumo_ia}</p>
+      </div>` : ''}
       <div class="alerta-footer">
         <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
         <button class="alerta-confirmar" onclick="confirmarAlerta(${typeof a.id === 'string' ? `'${a.id}'` : a.id})" aria-label="Confirmar alerta">
@@ -376,6 +381,8 @@ function _mapBackendAlerta(a) {
     urgencia: a.urgencia || 'media',
     ts: new Date(a.criado_em).getTime(),
     confirmacoes: a.confirmacoes || 0,
+    resumo_ia: a.resumo_ia || null,
+    moderado_ia: !!a.moderado_ia,
   };
 }
 
