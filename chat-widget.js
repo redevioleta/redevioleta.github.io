@@ -191,6 +191,21 @@ async function sendSimpleMessage() {
   let listening = false;
   let lastEscape = 0;
   let escapeTimer = null;
+  let vozesCache = [];
+
+  function atualizarVozesCache() {
+    if (root.speechSynthesis && typeof root.speechSynthesis.getVoices === 'function') {
+      const lista = root.speechSynthesis.getVoices();
+      if (lista && lista.length) vozesCache = lista;
+    }
+  }
+
+  if (root.speechSynthesis) {
+    atualizarVozesCache();
+    /* Em alguns navegadores (ex.: Chrome) a lista de vozes só fica disponível
+       de forma assíncrona, depois do evento "voiceschanged". */
+    root.speechSynthesis.onvoiceschanged = atualizarVozesCache;
+  }
 
   function el(...selectors) {
     if (!doc) return null;
@@ -212,7 +227,8 @@ async function sendSimpleMessage() {
 
   function vozFeminina() {
     if (!root.speechSynthesis || typeof root.speechSynthesis.getVoices !== 'function') return null;
-    const voices = root.speechSynthesis.getVoices();
+    atualizarVozesCache();
+    const voices = vozesCache.length ? vozesCache : root.speechSynthesis.getVoices();
     const language = idiomaAtual().split('-')[0];
     const languageVoices = voices.filter(function (voice) { return new RegExp('^' + language + '([-_]|$)', 'i').test(voice.lang || ''); });
     const indicadoresFemininos = /\b(female|woman|zira|luciana|francisca|maria|joana|fernanda|camila|helo[ií]sa|helena|vit[oó]ria|bruna|raquel|samantha|susan|karen|ana|aria|jenny|michelle|sara|paulina|monica|elena|laura|sofia|sabina|isabela)\b/i;
@@ -433,8 +449,13 @@ async function sendSimpleMessage() {
   function configurarA11y() {
     aplicarA11y(carregarA11y());
     if (!doc) return;
-    let voiceEnabled = false;
-    try { voiceEnabled = root.localStorage && root.localStorage.getItem(VOICE_KEY) === 'true'; } catch (_) {}
+    /* Respostas faladas com voz feminina ficam ativas por padrão;
+       a pessoa usuária pode desativar a qualquer momento pelo botão 🔊. */
+    let voiceEnabled = true;
+    try {
+      const salvo = root.localStorage && root.localStorage.getItem(VOICE_KEY);
+      voiceEnabled = salvo === null ? true : salvo === 'true';
+    } catch (_) {}
     toggleVoiceReply(voiceEnabled);
     doc.addEventListener('click', function (event) {
       const target = event.target && event.target.closest
