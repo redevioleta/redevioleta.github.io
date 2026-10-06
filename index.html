@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rede Violeta</title>
+  <meta name="theme-color" content="#6b4d5b" />
+  <meta name="description" content="Informações educativas e caminhos de apoio. Em emergência, ligue 190." />
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -24,15 +27,7 @@
   </div>
 </section>
 
-<!-- ─── Saída rápida ─── -->
-<button class="quick-exit-btn" id="quickExitBtn" onclick="saidaRapida()" aria-label="Sair rapidamente deste site e ir para uma página neutra">
-  <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Saída rápida
-</button>
-
 <!-- ─── Acessibilidade ─── -->
-<button class="a11y-fab" id="a11yFab" onclick="painelAcessibilidade()" aria-haspopup="true" aria-expanded="false" aria-controls="a11yPanel" aria-label="Abrir opções de acessibilidade">
-  <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
-</button>
 <div class="a11y-panel" id="a11yPanel" role="dialog" aria-modal="false" aria-labelledby="a11yPanelTitle">
   <h2 id="a11yPanelTitle">♿ Acessibilidade
     <button class="a11y-close" onclick="painelAcessibilidade(false)" aria-label="Fechar opções de acessibilidade">&times;</button>
@@ -91,8 +86,16 @@
   <i class="fa-solid fa-ribbon"></i> AGOSTO LILÁS 2026 <span>|</span> Pelo fim da violência contra a mulher <span>|</span> 🌸
 </div>
 
-<div class="academic-bar">
-  Projeto acadêmico desenvolvido para a <strong>Faculdade Cruzeiro do Sul</strong>
+<div class="utility-bar" role="toolbar" aria-label="Acessibilidade e segurança">
+  <button class="a11y-fab" id="a11yFab" onclick="painelAcessibilidade()" aria-haspopup="true" aria-expanded="false" aria-controls="a11yPanel" aria-label="Abrir opções de acessibilidade">
+    <i class="fa-solid fa-universal-access" aria-hidden="true"></i><span>Acessibilidade</span>
+  </button>
+  <button class="discreet-mode-btn" id="discreetModeBtn" type="button" onclick="alternarModoDiscreto()" aria-pressed="false">
+    <i class="fa-solid fa-eye-slash" aria-hidden="true"></i> Modo secreto
+  </button>
+  <button class="quick-exit-btn" id="quickExitBtn" onclick="saidaRapida()" aria-label="Sair rapidamente deste site e ir para uma página neutra">
+    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Saída rápida
+  </button>
 </div>
 
 <!-- ───────── Header ───────── -->
@@ -105,7 +108,9 @@
     <h1>Rede Violeta</h1>
     <p class="h1-sub">Rede Violeta — Juntas contra a violência</p>
     <p>Um espaço seguro para desabafar, aprender e denunciar o assédio.</p>
-    <span class="safe-badge"><i class="fa-solid fa-lock"></i> Ambiente confidencial</span>
+    <button class="pwa-install-btn" id="installPwaBtn" type="button" hidden>
+      <i class="fa-solid fa-download" aria-hidden="true"></i> Instalar aplicativo
+    </button>
   </div>
 </header>
 
@@ -114,40 +119,40 @@
   <div class="trust-item" role="listitem">
     <span class="trust-icon"><i class="fa-solid fa-lock"></i></span>
     <div>
-      <strong>Sigilo total</strong>
-      <span>Seus dados nunca são compartilhados</span>
+      <strong>Sem promessa de sigilo</strong>
+      <span>Leia como seus dados são tratados</span>
     </div>
   </div>
   <div class="trust-sep" aria-hidden="true"></div>
   <div class="trust-item" role="listitem">
     <span class="trust-icon"><i class="fa-solid fa-shield-halved"></i></span>
     <div>
-      <strong>Denúncia anônima</strong>
-      <span>Você escolhe se quer se identificar</span>
+      <strong>Dados enviados ao servidor</strong>
+      <span>Desabafos e denúncias são persistidos pelo projeto</span>
     </div>
   </div>
   <div class="trust-sep" aria-hidden="true"></div>
   <div class="trust-item" role="listitem">
     <span class="trust-icon"><i class="fa-solid fa-file-contract"></i></span>
     <div>
-      <strong>Conforme a LGPD</strong>
-      <span>Lei nº 13.709/2018</span>
+      <strong>Evite identificadores</strong>
+      <span>Não informe nomes, endereços ou dados sensíveis</span>
     </div>
   </div>
   <div class="trust-sep" aria-hidden="true"></div>
   <div class="trust-item" role="listitem">
     <span class="trust-icon"><i class="fa-solid fa-lock"></i></span>
     <div>
-      <strong>Criptografado</strong>
-      <span>Transmissão segura de informações</span>
+      <strong>Conexão depende da hospedagem</strong>
+      <span>Use somente o endereço oficial com HTTPS</span>
     </div>
   </div>
   <div class="trust-sep" aria-hidden="true"></div>
   <div class="trust-item" role="listitem">
     <span class="trust-icon"><i class="fa-solid fa-circle-check"></i></span>
     <div>
-      <strong>Sem rastreamento</strong>
-      <span>Nenhum registro de IP ou dispositivo</span>
+      <strong>Sem garantia contra rastreamento</strong>
+      <span>Navegador, rede e hospedagem podem gerar registros</span>
     </div>
   </div>
 </div>
@@ -180,7 +185,7 @@
         <div class="art-content">
           <div class="art-heart">💜</div>
           <h3>Violeta IA</h3>
-          <p>sua assistente de apoio • 24h • sigilosa</p>
+          <p>assistente informativa; disponibilidade pode variar</p>
         </div>
       </div>
     </div>
@@ -239,7 +244,7 @@
 
     <div class="card">
       <h2><i class="fa-solid fa-comments"></i> Espaço de desabafo</h2>
-      <p>Aqui você pode escrever o que está sentindo de forma livre e segura. Suas palavras são tratadas com total sigilo.</p>
+      <p>Este formulário envia o texto ao servidor do projeto e o salva no banco de dados. Não inclua nomes ou detalhes que identifiquem você ou outras pessoas. Em dispositivo monitorado, prefira não usar este formulário.</p>
 
       <div class="mood-wrap">
         <label class="mood-label">Como você está se sentindo agora?</label>
@@ -260,7 +265,7 @@
       <div class="char-count"><span id="desabafoCount">0</span>/2000 caracteres</div>
       <div id="desabafoError" class="alert alert-warning mt-14 is-hidden" role="alert">
         <span><i class="fa-solid fa-triangle-exclamation"></i></span>
-        <span>Não foi possível registrar seu desabafo. O texto continua apenas nesta página e não foi enviado. Tente novamente quando a conexão estiver disponível; em perigo imediato, ligue 190.</span>
+        <span>Não foi possível confirmar o recebimento. O servidor pode ter recebido o texto; evite reenviar para não criar duplicatas. Em perigo imediato, ligue 190.</span>
       </div>
 
       <div id="moodFeedback" class="alert alert-info mt-14 is-hidden">
@@ -268,6 +273,7 @@
         <span id="moodFeedbackText"></span>
       </div>
 
+      <label class="consent-note"><input type="checkbox" id="desabafoConsent"> Entendo que o texto será enviado ao servidor do projeto e armazenado no banco de dados.</label>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="enviarDesabafo()"><i class="fa-solid fa-paper-plane"></i> Registrar meu desabafo</button>
         <button class="btn btn-outline" onclick="limparDesabafo()"><i class="fa-solid fa-trash"></i> Limpar</button>
@@ -278,12 +284,12 @@
       <div class="success-overlay show">
         <div class="success-circle"><i class="fa-solid fa-check"></i></div>
         <h3>Obrigada por confiar!</h3>
-        <p>Seu desabafo foi registrado com segurança. Lembre-se: você merece apoio e não está sozinha/o nessa situação.</p>
+        <p>O servidor do projeto confirmou o recebimento. O texto pode permanecer armazenado; não há garantia de sigilo absoluto. Você merece apoio e não está sozinha/o nessa situação.</p>
         <div id="assedioClassif" class="alert alert-info mt-12 is-hidden"></div>
-        <div id="formalizarConfirm" class="alert alert-success mt-10 is-hidden"><span><i class="fa-solid fa-check"></i></span><span>Denúncia formalizada com protocolo.</span></div>
+        <div id="formalizarConfirm" class="alert alert-success mt-10 is-hidden"><span><i class="fa-solid fa-check"></i></span><span>Relato registrado no sistema do projeto; não é boletim de ocorrência nem denúncia oficial.</span></div>
         <div id="formalizarError" class="alert alert-warning mt-10 is-hidden" role="alert"><span><i class="fa-solid fa-triangle-exclamation"></i></span><span>Não foi possível formalizar a denúncia agora. Tente novamente mais tarde ou procure um serviço de atendimento.</span></div>
         <div class="btn-row centered mt-16">
-          <button class="btn btn-outline is-hidden" id="btnFormalizar" onclick="formalizarDenuncia()"><i class="fa-solid fa-file-lines"></i> Formalizar Denúncia</button>
+          <button class="btn btn-outline is-hidden" id="btnFormalizar" onclick="formalizarDenuncia()"><i class="fa-solid fa-file-lines"></i> Enviar relato ao projeto</button>
           <button class="btn btn-outline mt-18" onclick="novoDesabafo()">Fazer outro desabafo</button>
         </div>
       </div>
@@ -480,6 +486,17 @@
       </ol>
     </div>
 
+    <div class="card">
+      <h2><i class="fa-solid fa-book-open"></i> Isso é violência? Mitos, direitos e apoio</h2>
+      <div class="education-grid">
+        <article><h3>Isso é violência?</h3><p>Controle, ameaça, humilhação, perseguição, violência sexual e retenção de documentos também merecem atenção. Você não precisa ter certeza sobre o nome para pedir orientação.</p></article>
+        <article><h3>Mito: “ciúme prova amor”</h3><p>Vigilância, isolamento e controle não são demonstrações de afeto. Relações devem respeitar autonomia e consentimento.</p></article>
+        <article><h3>Seus direitos</h3><p>Você pode buscar orientação, atendimento de saúde e proteção. O Ligue 180 informa sobre serviços; em perigo imediato, ligue 190.</p></article>
+        <article><h3>Como apoiar uma amiga</h3><p>Escute sem julgar, acredite no relato, não pressione decisões e pergunte como ajudar. Não confronte a pessoa agressora sem consentimento e avaliação de segurança.</p></article>
+      </div>
+      <p class="cases-note">Conteúdo educativo geral; não substitui orientação jurídica, policial ou de saúde individual.</p>
+    </div>
+
     <!-- Mapa integrado -->
     <div id="timelineCard" class="card is-hidden">
       <h2><i class="fa-solid fa-clock-rotate-left"></i> Linha do Tempo</h2>
@@ -490,11 +507,29 @@
     <!-- Mapa integrado -->
     <div class="card">
       <h2><i class="fa-solid fa-map-location-dot"></i> Delegacias da Mulher (DEAM)</h2>
-      <p>Encontre a DEAM mais próxima. Clique no marcador para ver endereço e telefone.</p>
+      <p>O mapa pode exibir dados de exemplo ou informações desatualizadas. Confirme endereço e funcionamento com canais oficiais antes de se deslocar.</p>
       <div id="mapContainer" class="map-container"></div>
       <div id="mapLegendDelegacias" class="map-legend">
         <div class="legend-item"><span class="legend-dot dot-purple"></span> Delegacia Especializada da Mulher (DEAM)</div>
         <div class="legend-item"><span class="legend-dot dot-blue"></span> Clique no marcador para ver telefone e endereço</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-map-location-dot"></i> Buscar serviços de apoio</h2>
+      <p>Informe uma cidade e escolha um serviço. A busca será aberta em um mapa externo; o local não é enviado à Rede Violeta.</p>
+      <div class="support-search-row">
+        <label for="supportService">Serviço</label>
+        <select id="supportService">
+          <option value="Delegacia da Mulher DEAM">Delegacia da Mulher (DEAM)</option>
+          <option value="Defensoria Pública">Defensoria Pública</option>
+          <option value="CRAS CREAS">CRAS / CREAS</option>
+          <option value="UBS Unidade Básica de Saúde">UBS</option>
+          <option value="Centro de Referência de Atendimento à Mulher">Centro de Referência da Mulher</option>
+        </select>
+        <label for="supportCity">Cidade e estado</label>
+        <input id="supportCity" type="text" autocomplete="address-level2" placeholder="Ex.: Recife, PE" />
+        <button class="btn btn-primary" type="button" onclick="abrirBuscaApoio()"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Buscar no mapa</button>
       </div>
     </div>
 
@@ -600,6 +635,25 @@
         <li><strong>Delegacia Online SP</strong> — delegaciaeletronica.policiacivil.sp.gov.br</li>
         <li><strong>Jusbrasil</strong> — Consulta gratuita de processos e orientações jurídicas.</li>
       </ul>
+    </div>
+    <div class="card safety-plan" id="safetyPlan">
+      <h2><i class="fa-solid fa-shield-heart"></i> Meu plano de segurança</h2>
+      <p>Organize opções que façam sentido para você. Os campos e marcações ficam apenas nesta página: não são salvos nem enviados. Evite preencher se alguém puder monitorar sua tela.</p>
+      <div class="safety-plan-grid">
+        <label>Pessoa de confiança<input type="text" id="planTrustedPerson" autocomplete="off" placeholder="Nome ou forma segura de contato" /></label>
+        <label>Documentos e itens essenciais<input type="text" id="planDocuments" autocomplete="off" placeholder="O que separar, se for seguro" /></label>
+        <label>Contato ou palavra combinada<input type="text" id="planSignal" autocomplete="off" placeholder="Como pedir ajuda discretamente" /></label>
+        <label>Local seguro e rota<input type="text" id="planSafePlace" autocomplete="off" placeholder="Onde ir e como chegar" /></label>
+      </div>
+      <fieldset class="safety-checklist">
+        <legend>Itens para considerar, somente se for seguro</legend>
+        <label><input type="checkbox"> Pessoa de confiança avisada</label>
+        <label><input type="checkbox"> Documentos e medicamentos acessíveis</label>
+        <label><input type="checkbox"> Contatos importantes anotados</label>
+        <label><input type="checkbox"> Local seguro e transporte considerados</label>
+        <label><input type="checkbox"> Números de apoio: 190 (emergência), 180 (orientação)</label>
+      </fieldset>
+      <button class="btn btn-outline" type="button" onclick="limparPlanoSeguranca()"><i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar plano</button>
     </div>
     <div id="recursosBackend"></div>
   </section>
@@ -718,10 +772,31 @@
   <!-- ══════ ABA 9 — ALERTAS ══════ -->
   <section id="tab-alertas" class="tab-pane">
 
+    <div class="card academic-dashboard">
+      <h2><i class="fa-solid fa-chart-column"></i> Painel acadêmico demonstrativo</h2>
+      <p><strong>Dados fictícios para demonstração.</strong> Os gráficos abaixo não representam ocorrências reais nem comportamento de pessoas usuárias; não coletamos métricas de navegação para este painel.</p>
+      <div class="dashboard-grid">
+        <section aria-labelledby="violenceChartTitle">
+          <h3 id="violenceChartTitle">Tipos no conjunto fictício de alertas</h3>
+          <div id="violenceChart" class="chart-bars" role="list" aria-label="Distribuição fictícia por tipo de violência"></div>
+        </section>
+        <section aria-labelledby="supportChartTitle">
+          <h3 id="supportChartTitle">Canais de apoio procurados</h3>
+          <div class="chart-bars" role="list" aria-label="Exemplo fictício de procura por canais de apoio">
+            <div class="chart-row" role="listitem"><span>Ligue 180</span><span class="chart-track"><span style="width:82%"></span></span><strong>82</strong></div>
+            <div class="chart-row" role="listitem"><span>Delegacia</span><span class="chart-track"><span style="width:58%"></span></span><strong>58</strong></div>
+            <div class="chart-row" role="listitem"><span>Defensoria</span><span class="chart-track"><span style="width:36%"></span></span><strong>36</strong></div>
+            <div class="chart-row" role="listitem"><span>UBS / CRAS</span><span class="chart-track"><span style="width:44%"></span></span><strong>44</strong></div>
+          </div>
+          <p class="chart-caption">Valores ilustrativos, sem relação com registros reais.</p>
+        </section>
+      </div>
+    </div>
+
     <!-- Estatísticas de locais e tipos -->
     <div class="card">
       <h2><i class="fa-solid fa-triangle-exclamation"></i> Onde e como o assédio mais acontece</h2>
-      <p>Dados do <strong>Fórum Brasileiro de Segurança Pública 2025</strong> e do <strong>IPEA</strong>.</p>
+      <p><strong>Dados fictícios para demonstração; não foram extraídos do FBSP ou do IPEA.</strong> Não use estes exemplos como estatística atual ou orientação sobre risco em um endereço específico.</p>
       <div class="stat-highlights">
         <div class="stat-hl stat-hl-red">
           <span class="stat-hl-num">65%</span>
@@ -797,9 +872,12 @@
         <div class="form-group"><label for="alertaLocal">Local específico (opcional)</label><input type="text" id="alertaLocal" placeholder="Ex.: Estação Sé, Metrô Linha 3" /></div>
         <div class="form-group"><label for="alertaDesc">Descreva a situação <span class="req">*</span></label><textarea id="alertaDesc" oninput="updateCharCount(this,'alertaCount',500)" maxlength="500" placeholder="O que está acontecendo? Evite nomes de vítimas."></textarea><div class="char-count"><span id="alertaCount">0</span>/500 caracteres</div></div>
         <div class="form-group"><label>Nível de urgência</label><div class="radio-group"><label class="radio-opt"><input type="radio" name="urgencia" value="baixa"> <i class="fa-solid fa-circle urgencia-baixa"></i> Baixa</label><label class="radio-opt"><input type="radio" name="urgencia" value="media" checked> <i class="fa-solid fa-circle urgencia-media"></i> Média</label><label class="radio-opt"><input type="radio" name="urgencia" value="alta"> <i class="fa-solid fa-circle urgencia-alta"></i> Alta — risco imediato</label></div></div>
+        <div id="alertaSubmitError" class="alert alert-warning is-hidden" role="alert"><span><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span><span>Não foi possível publicar. Nenhum alerta foi confirmado pelo servidor; tente novamente quando a conexão estiver disponível.</span></div>
+        <label class="consent-note"><input type="checkbox" id="alertaConsent"> Entendo que a descrição e a localização serão enviadas ao servidor e exibidas no feed. Relatos não são verificados; não inclua nomes, contatos ou detalhes identificáveis.</label>
         <div class="btn-row"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-bell"></i> Publicar Alerta</button><button type="button" class="btn btn-outline" onclick="resetAlertaForm()"><i class="fa-solid fa-trash"></i> Limpar</button></div>
       </form>
     </div>
+    <div class="alert alert-warning demo-disclosure" role="note"><span><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span><span>O feed pode combinar <strong>dados fictícios para demonstração</strong> e relatos enviados por usuários, que não são verificados. Não use estes avisos como confirmação de perigo ou segurança local.</span></div>
     <div class="alert-filters" role="group" aria-label="Filtrar alertas">
       <button class="filter-btn active" onclick="filtrarAlertas('todos')">Todos</button>
       <button class="filter-btn" onclick="filtrarAlertas('Sexual')">Sexual</button>
@@ -817,8 +895,14 @@
     <div class="academic-box">
       <div class="university">🎓 Faculdade Cruzeiro do Sul</div>
       <h2>Projeto Acadêmico — Rede Violeta</h2>
-      <p>Este site foi desenvolvido como projeto acadêmico para a Faculdade Cruzeiro do Sul, com finalidade educativa e de conscientização sobre violência contra a mulher.</p>
-      <p>A Rede Violeta não substitui serviços públicos, atendimento policial, médico, psicológico ou jurídico profissional.</p>
+      <p><strong>Problema:</strong> informação sobre violência e caminhos de apoio nem sempre são fáceis de encontrar. <strong>Objetivo:</strong> reunir conteúdo educativo, canais oficiais e ferramentas de reflexão em um só lugar.</p>
+      <p><strong>ODS:</strong> alinhado ao ODS 5 (Igualdade de Gênero). <strong>Abordagem:</strong> Design Thinking, com foco em empatia, definição do problema, ideação, prototipação e validação com pessoas usuárias.</p>
+      <p><strong>Tecnologias:</strong> HTML, CSS, JavaScript, FastAPI, SQLite e Leaflet. <strong>Integrantes:</strong> preencher com os nomes autorizados pela equipe acadêmica.</p>
+      <p>A Rede Violeta não substitui serviços públicos, atendimento policial, médico, psicológico ou jurídico profissional. As informações e localizações precisam ser confirmadas em fontes oficiais.</p>
+      <details class="video-script">
+        <summary>Roteiro para vídeo de apresentação (60–90 segundos)</summary>
+        <p>“A violência contra mulheres pode aparecer de muitas formas, e reconhecer os sinais e encontrar apoio nem sempre é simples. A Rede Violeta é um projeto acadêmico da Faculdade Cruzeiro do Sul criado para reunir informação e caminhos de ajuda em uma interface acessível. O projeto apresenta conteúdos educativos, contatos como o 180 e o 190, busca de serviços, um plano de segurança que não é enviado ao servidor e uma assistente informativa. Também deixa claro quando um dado é fictício e quais informações são enviadas pelo site. A proposta se conecta ao ODS 5 e foi estruturada com etapas de Design Thinking, desde a compreensão do problema até a prototipação. A Rede Violeta não substitui serviços profissionais nem é um canal de emergência. Em risco imediato, ligue 190. Informação pode ajudar a encontrar apoio, respeitando o tempo e as escolhas de cada pessoa.”</p>
+      </details>
     </div>
   </div>
 
@@ -854,6 +938,15 @@ Posso ajudar você a encontrar informações sobre os canais de emergência, exp
 
 Se houver perigo imediato, procure um local seguro e ligue 190.</div>
     </div>
+    <div class="guided-prompts" role="group" aria-label="Perguntas guiadas para a Violeta">
+      <button type="button" onclick="enviarSugestaoIA('Estou em perigo agora')">Emergência</button>
+      <button type="button" onclick="enviarSugestaoIA('Quero informações sobre violência doméstica')">Violência doméstica</button>
+      <button type="button" onclick="enviarSugestaoIA('Quero informações sobre violência sexual')">Violência sexual</button>
+      <button type="button" onclick="enviarSugestaoIA('Quero informações sobre violência moral')">Violência moral</button>
+      <button type="button" onclick="enviarSugestaoIA('Estou sendo perseguida, isso é stalking?')">Stalking</button>
+      <button type="button" onclick="enviarSugestaoIA('Como agir em caso de cyberbullying?')">Cyberbullying</button>
+    </div>
+    <p class="chat-privacy-note">As mensagens são enviadas à API do projeto e, se configurado, ao provedor de IA. O histórico da conversa fica na memória desta página, mas o projeto não controla registros técnicos de hospedagem ou do provedor.</p>
     <div class="simple-chat-input">
       <button type="button" class="mic-btn" id="micBtn" onclick="toggleMic()" aria-pressed="false" aria-label="Falar com a Violeta usando o microfone" title="Falar por voz">
         <i class="fa-solid fa-microphone" aria-hidden="true"></i>
@@ -880,7 +973,7 @@ Se houver perigo imediato, procure um local seguro e ligue 190.</div>
     <a href="tel:100"><i class="fa-solid fa-phone"></i> Direitos Humanos — 100</a>
     <a href="tel:188"><i class="fa-solid fa-phone"></i> CVV — 188</a>
   </div>
-  <p class="footer-note">Suas informações são tratadas com sigilo absoluto.</p>
+  <p class="footer-note">Não há garantia de sigilo absoluto, ausência de registros ou criptografia ponta a ponta. Veja o aviso junto a cada formulário antes de enviar informações.</p>
 </footer>
 
 <script src="chat-widget.js"></script>

@@ -15,9 +15,8 @@ setInterval(() => {
 }, 6500);
 
 /* ── Chat simples ── */
-/* Histórico de conversa — só em memória (nunca salvo em localStorage,
-   banco de dados), para preservar a privacidade da pessoa usuária.
-   É zerado ao fechar o chat ou acionar a saída rápida. */
+/* O histórico fica em memória no navegador, mas as mensagens são enviadas
+  à API e podem ser encaminhadas ao provedor configurado. */
 let simpleChatHistory = [];
 
 /* Token de sessão: invalida respostas pendentes ao fechar o chat. */
@@ -51,6 +50,13 @@ window.addEventListener('click', function (e) {
 
 function handleSimpleEnter(e) {
   if (e.key === 'Enter') sendSimpleMessage();
+}
+
+function enviarSugestaoIA(texto) {
+  const input = document.getElementById('simpleUserInput');
+  if (!input) return;
+  input.value = texto;
+  sendSimpleMessage();
 }
 
 function addSimpleMsg(text, cls) {
@@ -94,6 +100,16 @@ function respostaLocalDeFallback(text, language) {
 
   if (q.includes('perigo') || q.includes('socorro') || q.includes('amea') || q.includes('agredindo') || q.includes('agress')) {
     r = 'Se você estiver em perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 também oferece orientação e informações sobre a rede de atendimento.';
+  } else if (q.includes('doméstica') || q.includes('domestica') || q.includes('companheiro') || q.includes('parceiro')) {
+    r = 'Violência doméstica pode incluir agressões, ameaças, humilhação, controle e violência patrimonial ou sexual. Você não precisa decidir agora o que fazer. Se for seguro, fale com alguém de confiança ou ligue 180 para orientação; em perigo imediato, ligue 190.';
+  } else if (q.includes('sexual') || q.includes('consentimento')) {
+    r = 'Qualquer contato ou ato sexual sem consentimento merece ser levado a sério; a culpa não é sua. Se precisar de atendimento de saúde, procure uma unidade de saúde ou serviço especializado. O Ligue 180 orienta sobre a rede de atendimento; em emergência, ligue 190.';
+  } else if (q.includes('moral') || q.includes('humilha') || q.includes('difama')) {
+    r = 'Humilhações, xingamentos e ataques à reputação podem causar sofrimento e podem exigir orientação especializada. Se for seguro, registre o que aconteceu sem se expor e procure alguém de confiança ou a Defensoria Pública. O Ligue 180 também pode orientar sobre serviços.';
+  } else if (q.includes('stalking') || q.includes('persegui')) {
+    r = 'Perseguição repetida pode gerar risco. Não confronte a pessoa se isso puder aumentar o perigo; conte a alguém de confiança e guarde registros somente se for seguro. O Ligue 180 orienta sobre serviços e, em perigo imediato, ligue 190.';
+  } else if (q.includes('cyberbullying') || q.includes('ciberbullying') || q.includes('internet') || q.includes('online')) {
+    r = 'Em caso de violência online, priorize sua segurança digital: evite responder se isso aumentar o risco, guarde evidências apenas se for seguro e denuncie o conteúdo na plataforma. A SaferNet oferece orientação; em ameaça imediata, ligue 190.';
   } else if (q.includes('180') || q.includes('denúncia') || q.includes('denuncia') || q.includes('orienta')) {
     r = 'O Ligue 180 é a Central de Atendimento à Mulher. O serviço é gratuito e funciona 24 horas. Ele oferece orientação sobre direitos e serviços da rede de atendimento.';
   } else if (q.includes('delegacia') || q.includes('deam')) {
@@ -158,7 +174,14 @@ async function sendSimpleMessage() {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const dados = await res.json();
-    resposta = dados && dados.resposta ? dados.resposta : respostaLocalDeFallback(text, idioma);
+    const respostaGenerica = 'Posso ajudar com informações sobre os recursos da Rede Violeta, canais de apoio, tipos de violência ou formas de buscar ajuda. Sou a Violeta! 💜';
+    const temaGuiado = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const respostaGeneralista = dados?.resposta === respostaGenerica
+      || (/domestic|sexual|moral|stalking|perseg|cyberbullying|ciberbullying/.test(temaGuiado)
+        && dados?.resposta?.startsWith('Violência contra a mulher pode ser física'));
+    resposta = dados?.resposta && !respostaGeneralista
+      ? dados.resposta
+      : respostaLocalDeFallback(text, idioma);
   } catch (e) {
     /* Backend indisponível — usa respostas locais para manter o chat acessível. */
     resposta = respostaLocalDeFallback(text, idioma);
@@ -434,10 +457,15 @@ async function sendSimpleMessage() {
     const alerta = el('#alertaDesc');
     const chatInput = el('#simpleUserInput');
     const chatBox = el('#simpleChatBox');
+    const plan = el('#safetyPlan');
     if (desabafo) desabafo.value = '';
     if (alerta) alerta.value = '';
     if (chatInput) chatInput.value = '';
     if (chatBox) chatBox.replaceChildren();
+    if (plan) plan.querySelectorAll('input').forEach(input => {
+      if (input.type === 'checkbox') input.checked = false;
+      else input.value = '';
+    });
     chatSession++;
     simpleChatHistory = [];
     pararFala();

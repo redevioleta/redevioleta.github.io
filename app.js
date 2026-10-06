@@ -11,6 +11,12 @@ const API_BASE = window.REDE_VIOLETA_API_BASE || (
 );
 window.REDE_VIOLETA_API_BASE = API_BASE;
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+
 async function apiFetch(path, options = {}) {
   const ctrl  = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 3000);
@@ -32,12 +38,16 @@ async function apiFetch(path, options = {}) {
 function switchTab(tab) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll('.tab-pane').forEach(p => p.setAttribute('aria-hidden', 'true'));
+  const pane = document.getElementById('tab-' + tab);
+  pane.classList.add('active');
+  pane.setAttribute('aria-hidden', 'false');
   const idx = TAB_MAP[tab];
   if (idx !== undefined) {
     const btns = document.querySelectorAll('.tab-btn');
     btns[idx].classList.add('active');
     btns[idx].setAttribute('aria-selected', 'true');
+    btns.forEach((button, buttonIndex) => button.tabIndex = buttonIndex === idx ? 0 : -1);
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (tab === 'identificar' && !mapInitialized) setTimeout(initMap, 120);
@@ -46,6 +56,18 @@ function switchTab(tab) {
   if (tab === 'faq')         initFAQ();
   if (tab === 'alertas')     renderFeed();
 }
+
+document.querySelector('.tab-nav')?.addEventListener('keydown', event => {
+  const buttons = [...document.querySelectorAll('.tab-btn')];
+  const current = buttons.indexOf(document.activeElement);
+  if (current < 0 || !['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1
+    : (current + (event.key === 'ArrowRight' ? 1 : buttons.length - 1)) % buttons.length;
+  const tab = Object.keys(TAB_MAP).find(key => TAB_MAP[key] === next);
+  buttons[next].focus();
+  if (tab) switchTab(tab);
+});
 
 /* ── Acordeão ── */
 function toggleAcc(btn) {
@@ -90,6 +112,10 @@ document.getElementById('moodRow').addEventListener('click', e => {
 async function enviarDesabafo() {
   const txt = document.getElementById('desabafoText').value.trim();
   if (!txt) { alert(textoNoIdioma('Escreva algo antes de registrar seu desabafo. 💙')); return; }
+  if (!document.getElementById('desabafoConsent').checked) {
+    alert('Confirme que compreendeu o envio e armazenamento do texto antes de continuar.');
+    return;
+  }
 
   document.getElementById('desabafoError').classList.add('is-hidden');
   const registro = await apiFetch('/desabafos/', {
@@ -141,6 +167,7 @@ function novoDesabafo() {
 async function formalizarDenuncia() {
   const txt = document.getElementById('assedioClassif').dataset.texto || '';
   if (!txt) return;
+  if (!window.confirm('Este envio registra o texto no sistema do projeto acadêmico; não é um boletim de ocorrência nem uma denúncia oficial. Deseja continuar?')) return;
   const btn = document.getElementById('btnFormalizar');
   document.getElementById('formalizarError').classList.add('is-hidden');
   btn.disabled = true;
@@ -292,6 +319,7 @@ const alertasSeed = [
   { id: 17, tipo: 'Violência Física',                 cidade: 'Natal',            uf: 'RN', local: 'Bairro Lagoa Nova',                   desc: 'Mulher foi agredida com socos pelo companheiro após tentar terminar o relacionamento. Filho menor de idade presenciou. Medida protetiva solicitada.',         urgencia: 'alta',  ts: Date.now() - 45000000,   confirmacoes: 11 },
   { id: 18, tipo: 'Assédio Sexual',                   cidade: 'Vitória',          uf: 'ES', local: 'Escritório de advocacia — Centro',    desc: 'Advogada relata que sócio faz comentários sobre seu corpo e envia mensagens com conotação sexual. Dois outros funcionários testemunharam situações.',       urgencia: 'media', ts: Date.now() - 64800000,   confirmacoes: 8  },
 ];
+const demoAlertIds = new Set(alertasSeed.map(alerta => alerta.id));
 
 function loadAlertas() {
   try {
@@ -343,20 +371,21 @@ function _paintFeed(lista) {
   feed.innerHTML = filtrados.map(a => `
     <div class="alerta-card urgencia-borda-${a.urgencia}">
       <div class="alerta-header">
-        <span class="alerta-tipo">${textoNoIdioma(a.tipo)}</span>
+        <span class="alerta-tipo">${escapeHtml(textoNoIdioma(a.tipo))}</span>
+        <span class="alerta-origin">${demoAlertIds.has(a.id) ? 'Dados fictícios para demonstração' : a.origemLocal ? 'Rascunho local; não enviado' : 'Relato comunitário; não verificado'}</span>
         <span class="urgencia-tag ${urgenciaClass[a.urgencia]}">
           <i class="fa-solid fa-circle"></i> ${urgenciaLabel[a.urgencia]}
         </span>
       </div>
       <div class="alerta-local">
         <i class="fa-solid fa-location-dot"></i>
-        <strong>${a.cidade}, ${a.uf}</strong>${a.local ? ` — ${a.local}` : ''}
+        <strong>${escapeHtml(a.cidade)}, ${escapeHtml(a.uf)}</strong>${a.local ? ` — ${escapeHtml(a.local)}` : ''}
       </div>
-      <p class="alerta-desc">${a.desc}</p>
+      <p class="alerta-desc">${escapeHtml(a.desc)}</p>
       ${a.moderado_ia && a.resumo_ia ? `
       <div class="alerta-ia">
         <span class="alerta-ia-badge"><i class="fa-solid fa-robot"></i> Moderado pela Violeta IA</span>
-        <p class="alerta-ia-resumo">${a.resumo_ia}</p>
+        <p class="alerta-ia-resumo">${escapeHtml(a.resumo_ia)}</p>
       </div>` : ''}
       <div class="alerta-footer">
         <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
@@ -437,22 +466,28 @@ async function criarAlerta(e) {
   const desc     = document.getElementById('alertaDesc').value.trim();
   const urgencia = document.querySelector('input[name="urgencia"]:checked')?.value || 'media';
 
+  if (!document.getElementById('alertaConsent').checked) {
+    alert('Confirme que compreendeu a publicação do relato antes de continuar.');
+    return;
+  }
+
   if (!tipo)   { alert('Selecione o tipo de abuso.'); return; }
   if (!cidade) { alert('Informe a cidade.'); return; }
   if (!uf)     { alert('Selecione o estado.'); return; }
   if (!desc)   { alert('Descreva a situação.'); return; }
 
-  apiFetch('/alertas/', {
+  const registro = await apiFetch('/alertas/', {
     method: 'POST',
     body: JSON.stringify({
       titulo: tipo, descricao: desc, urgencia,
       localizacao: `${cidade}, ${uf}${local ? ' — ' + local : ''}`,
     }),
   });
-
-  const lista = loadAlertas();
-  lista.unshift({ id: Date.now(), tipo, cidade, uf, local, desc, urgencia, ts: Date.now(), confirmacoes: 1 });
-  saveAlertas(lista);
+  if (!registro?.id) {
+    document.getElementById('alertaSubmitError').classList.remove('is-hidden');
+    return;
+  }
+  document.getElementById('alertaSubmitError').classList.add('is-hidden');
   document.getElementById('alertaForm').reset();
   document.getElementById('alertaCount').textContent = '0';
   filtroAtivo = 'todos';
@@ -464,6 +499,7 @@ async function criarAlerta(e) {
 function resetAlertaForm() {
   document.getElementById('alertaForm').reset();
   document.getElementById('alertaCount').textContent = '0';
+  document.getElementById('alertaSubmitError').classList.add('is-hidden');
 }
 
 /* ── Linha do tempo ── */
@@ -599,7 +635,7 @@ const heatData = [
   ...spreadHeat(-20.32, -40.31,  28, 0.6, 0.5),   // Vitória
 ];
 
-const deamIcon = L.divIcon({
+const deamIcon = typeof L === 'undefined' ? null : L.divIcon({
   className: '',
   html: '<div style="width:20px;height:20px;background:#7b2d8b;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>',
   iconSize: [20, 20],
@@ -609,6 +645,10 @@ const deamIcon = L.divIcon({
 
 async function initMap() {
   if (mapInitialized) return;
+  if (typeof L === 'undefined') {
+    document.getElementById('mapContainer').innerHTML = '<p class="map-note">O mapa precisa de conexão para carregar. Consulte os canais oficiais em Recursos &amp; Apoio.</p>';
+    return;
+  }
   mapInitialized = true;
 
   leafletMap = L.map('mapContainer').setView([-14.24, -51.93], 4);
@@ -652,5 +692,92 @@ function switchMapTab(mode) {
   leafletMap.invalidateSize();
 }
 
+function alternarModoDiscreto() {
+  const html = document.documentElement;
+  const ativo = !html.classList.contains('discreet-mode');
+  const botao = document.getElementById('discreetModeBtn');
+  const titulo = document.querySelector('header h1');
+  const subtitulo = document.querySelector('header .h1-sub');
+  const descricao = document.querySelector('.header-inner > p:not(.h1-sub)');
+  html.classList.toggle('discreet-mode', ativo);
+  document.title = ativo ? 'Página inicial' : 'Rede Violeta';
+  if (titulo) titulo.textContent = ativo ? 'Página inicial' : 'Rede Violeta';
+  if (subtitulo) subtitulo.textContent = ativo ? 'Informações e serviços' : 'Rede Violeta — Juntas contra a violência';
+  if (descricao) descricao.textContent = ativo ? 'Conteúdo informativo disponível.' : 'Um espaço seguro para desabafar, aprender e denunciar o assédio.';
+  if (botao) {
+    botao.setAttribute('aria-pressed', String(ativo));
+    botao.innerHTML = ativo
+      ? '<i class="fa-solid fa-eye" aria-hidden="true"></i> Desativar modo secreto'
+      : '<i class="fa-solid fa-eye-slash" aria-hidden="true"></i> Modo secreto';
+  }
+}
+
+function abrirBuscaApoio() {
+  const cidade = document.getElementById('supportCity').value.trim();
+  if (!cidade) {
+    document.getElementById('supportCity').focus();
+    return;
+  }
+  const servico = document.getElementById('supportService').value;
+  const url = `https://www.openstreetmap.org/search?query=${encodeURIComponent(`${servico}, ${cidade}`)}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function limparPlanoSeguranca() {
+  document.querySelectorAll('#safetyPlan input').forEach(input => {
+    if (input.type === 'checkbox') input.checked = false;
+    else input.value = '';
+  });
+}
+
+function renderAcademicDashboard() {
+  const chart = document.getElementById('violenceChart');
+  if (!chart) return;
+  const counts = alertasSeed.reduce((totals, alerta) => {
+    totals[alerta.tipo] = (totals[alerta.tipo] || 0) + 1;
+    return totals;
+  }, {});
+  const max = Math.max(...Object.values(counts));
+  chart.innerHTML = Object.entries(counts).map(([tipo, total]) => `
+    <div class="chart-row" role="listitem"><span>${escapeHtml(tipo)}</span><span class="chart-track"><span style="width:${Math.round(total / max * 100)}%"></span></span><strong>${total}</strong></div>
+  `).join('');
+}
+
+let installPromptEvent = null;
+window.addEventListener('beforeinstallprompt', event => {
+  event.preventDefault();
+  installPromptEvent = event;
+  const button = document.getElementById('installPwaBtn');
+  if (button) button.hidden = false;
+});
+
+document.getElementById('installPwaBtn')?.addEventListener('click', async () => {
+  if (!installPromptEvent) return;
+  installPromptEvent.prompt();
+  await installPromptEvent.userChoice;
+  installPromptEvent = null;
+  document.getElementById('installPwaBtn').hidden = true;
+});
+
+if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}), { once: true });
+}
+
 /* popula o feed na carga inicial sem esperar clique na aba */
-document.addEventListener('DOMContentLoaded', () => renderFeed());
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.tab-btn');
+  Object.keys(TAB_MAP).forEach(tab => {
+    const pane = document.getElementById('tab-' + tab);
+    const button = buttons[TAB_MAP[tab]];
+    if (!pane || !button) return;
+    pane.setAttribute('role', 'tabpanel');
+    pane.setAttribute('aria-labelledby', `tab-button-${tab}`);
+    pane.setAttribute('aria-hidden', String(!pane.classList.contains('active')));
+    pane.tabIndex = 0;
+    button.id = `tab-button-${tab}`;
+    button.setAttribute('aria-controls', pane.id);
+    button.tabIndex = button.classList.contains('active') ? 0 : -1;
+  });
+  renderFeed();
+  renderAcademicDashboard();
+});

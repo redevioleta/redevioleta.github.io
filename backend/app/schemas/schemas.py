@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Literal, Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 class DesabafoCreate(BaseModel):
     texto: str
@@ -108,6 +108,8 @@ class AlertaComunitarioOut(AlertaComunitarioCreate):
     id: int
     confirmacoes: int = 0
     criado_em: datetime
+    resumo_ia: Optional[str] = None
+    moderado_ia: bool = False
 
     class Config:
         from_attributes = True
@@ -118,12 +120,13 @@ class ChatMensagem(BaseModel):
     (enviada pelo próprio frontend a cada requisição) — nunca persistida
     no servidor."""
     role: Literal["user", "assistant"]
-    content: str = Field(min_length=1, max_length=2000)
+    content: str
 
 
 class ChatRequest(BaseModel):
-    mensagem: str = Field(max_length=2000)
-    historico: List[ChatMensagem] = Field(default_factory=list, max_length=16)
+    mensagem: str
+    historico: List[ChatMensagem] = []
+    idioma: Literal["pt", "en", "es"] = "pt"
     idioma: Literal["pt", "en", "es"] = "pt"
 
 

@@ -79,3 +79,5 @@ class AlertaComunitario(Base):
     urgencia = Column(String, default="media")  # alta, media, baixa
     confirmacoes = Column(Integer, default=0)
     criado_em = Column(DateTime(timezone=True), server_default=func.now())
+    resumo_ia = Column(Text, nullable=True)  # resumo gerado pela Violeta IA
+    moderado_ia = Column(Boolean, default=False)  # True se a Violeta IA analisou este alerta

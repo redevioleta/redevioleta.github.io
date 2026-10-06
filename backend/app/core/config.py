@@ -18,12 +18,10 @@ class Settings(BaseSettings):
     openai_base_url: str = "https://api.openai.com/v1"
     openai_model: str = "gpt-4o-mini"
     openai_timeout_seconds: float = 20.0
-    gemini_api_key: Optional[str] = None
-    gemini_model: str = "gemini-2.5-flash"
 
     @property
     def ai_enabled(self) -> bool:
-        return bool(self.openai_api_key or self.gemini_api_key)
+        return bool(self.openai_api_key)
 
     model_config = {
         "env_file": ".env",

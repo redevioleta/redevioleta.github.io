@@ -1,0 +1,19 @@
+{
+  "name": "Rede Violeta | Informação e apoio",
+  "short_name": "Rede Violeta",
+  "description": "Informação educativa e caminhos de apoio.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf8ff",
+  "theme_color": "#6b4d5b",
+  "icons": [
+    {
+      "src": "./img/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

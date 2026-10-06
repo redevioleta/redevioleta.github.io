@@ -3,7 +3,6 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,40 +17,23 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Checkout latest Rede Violeta frontend
-        uses: actions/checkout@v4
-        with:
-          repository: Cleysonvieira635/rede-violeta
-          ref: main
-          path: source
-
       - uses: actions/configure-pages@v4
 
-      - name: Verify responsive layout, safety controls, and fresh PWA cache
-        run: |
-          grep -q 'overflow-wrap: anywhere;' source/style.css
-          grep -q 'repeat(2, minmax(0, 1fr))' source/style.css
-          grep -q 'class="utility-bar"' source/index.html
-          grep -q 'Modo secreto' source/index.html
-          ! grep -q 'Projeto acadêmico desenvolvido para a' source/index.html
-          grep -q "rede-violeta-static-v5" source/service-worker.js
-
-      - name: Prepare site files
+      - name: Copiar apenas arquivos do frontend
         run: |
           mkdir -p _site
-          cp source/index.html _site/
-          cp source/app.js _site/
-          cp source/language.js _site/
-          cp source/chat-widget.js _site/
-          cp source/style.css _site/
-          cp source/manifest.webmanifest _site/
-          cp source/service-worker.js _site/
-          cp -r source/img _site/
+          cp index.html _site/
+          cp app.js _site/
+          cp language.js _site/
+          cp chat-widget.js _site/
+          cp style.css _site/
+          cp manifest.webmanifest _site/
+          cp service-worker.js _site/
+          cp -r img _site/
 
       - uses: actions/upload-pages-artifact@v3
         with:
