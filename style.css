@@ -1161,6 +1161,14 @@ footer i            { color: #c084fc; }
 .academic-box h2 { color: var(--purple-dark); font-size: 1.05rem; margin-bottom: 0; }
 .academic-box p  { color: var(--muted); font-size: .88rem; }
 .academic-box p + p { margin-top: 10px; }
+.about-box { padding: 24px clamp(18px, 3vw, 32px); text-align: left; }
+.about-box > h2 { font-size: 1.5rem; margin-bottom: 4px; }
+.about-box .about-tagline { color: var(--purple-dark); font-size: 1rem; font-weight: 700; margin: 0 0 16px; }
+.about-box > p:not(.about-tagline):not(.about-closing), .about-block p { line-height: 1.65; }
+.about-block { margin-top: 20px; }
+.about-block h3 { color: var(--purple-dark); font-size: 1rem; margin-bottom: 6px; }
+.about-list { margin: 8px 0 0; padding-left: 1.3rem; color: var(--muted); line-height: 1.7; }
+.about-closing { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 16px; color: var(--purple-dark); }
 
 /* ── Chat Simples (Modal) ── */
 .simple-modal {
