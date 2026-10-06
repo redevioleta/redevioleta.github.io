@@ -32,6 +32,11 @@ jobs:
 
       - uses: actions/configure-pages@v4
 
+      - name: Verify mobile layout rules
+        run: |
+          grep -q 'overflow-wrap: anywhere;' source/style.css
+          grep -q 'repeat(2, minmax(0, 1fr))' source/style.css
+
       - name: Prepare site files
         run: |
           mkdir -p _site
