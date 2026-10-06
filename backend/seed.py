@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from app.db.database import SessionLocal, Base, engine
 from app.models.models import (
-    FaqItem, Recurso, Quiz, EventoLinhaDoTempo, Delegacia, AlertaComunitario
+    FaqItem, Recurso, Quiz, EventoLinhaDoTempo, Delegacia
 )
 from datetime import datetime
 
@@ -172,36 +172,7 @@ else:
 
 db.commit()
 
-# ── ALERTAS COMUNITÁRIOS ──────────────────────────────────────────────────────
-from datetime import timedelta
-now = datetime.now
-alertas_seed = [
-    ("Importunação Sexual",             "São Paulo, SP — Metrô Linha 2-Verde",               "Relatos recorrentes de importunação sexual nos vagões entre as estações Paraíso e Ana Rosa nos horários de pico.",                                                "alta"),
-    ("Assédio Virtual / Cyberbullying", "Rio de Janeiro, RJ — Instagram / WhatsApp",         "Perfis falsos criados para assediar mulheres com mensagens íntimas não solicitadas. Múltiplas vítimas relataram o mesmo padrão.",                                "media"),
-    ("Violência Doméstica",             "Belo Horizonte, MG — Bairro Santa Efigênia",        "Situação de violência doméstica em andamento relatada por vizinhas. Pedido de apoio e orientação à comunidade.",                                                 "alta"),
-    ("Perseguição (Stalking)",          "Curitiba, PR — Bairro Água Verde",                  "Homem seguindo mulheres que saem do trabalho no período noturno. Comportamento identificado em mais de uma ocasião.",                                           "alta"),
-    ("Assédio Moral",                   "Porto Alegre, RS — Centro Comercial Iguatemi",      "Funcionárias relatam assédio moral sistemático por parte de gerência. Situação já reportada ao RH sem resolução.",                                            "media"),
-    ("Assédio Sexual",                  "Salvador, BA — Orla de Ondina",                     "Grupo de homens abordando mulheres de forma agressiva na orla. Situação especialmente intensa nos finais de semana.",                                          "media"),
-    ("Assédio Moral",                   "Brasília, DF — Setor Bancário Sul",                 "Supervisora humilha funcionárias publicamente em reuniões, atribui erros alheios a elas e ameaça demissão sem justificativa. Pelo menos 5 relatos confirmados.", "media"),
-    ("Importunação Sexual",             "Recife, PE — Terminal Integrado de Passageiros",    "Homem encosta e faz comentários obscenos em mulheres que aguardam ônibus no período da tarde. Relatado por passageiras em diferentes dias.",                    "alta"),
-    ("Assédio Virtual / Cyberbullying", "Fortaleza, CE — TikTok / Telegram",                 "Grupo no Telegram compartilha fotos e vídeos íntimos de mulheres sem consentimento. Vítimas identificadas já acionaram a SaferNet.",                            "alta"),
-    ("Violência Física",                "Manaus, AM — Bairro Compensa",                      "Mulher agredida fisicamente por parceiro em via pública. Vizinhos chamaram a PM. Vítima está em abrigo. Caso em acompanhamento pela Delegacia da Mulher.",    "alta"),
-    ("Perseguição (Stalking)",          "Campinas, SP — Universidade Estadual de Campinas",  "Ex-aluno persegue estudante dentro do campus, manda mensagens ameaçadoras e aparece em locais que ela frequenta. Caso registrado na ouvidoria da universidade.", "alta"),
-    ("Assédio Sexual",                  "Florianópolis, SC — Praia de Jurerê",               "Homens abordam mulheres que estão sozinhas na praia, fazem comentários sexuais e seguem mesmo após pedido de afastamento. Situações repetidas nos fins de semana.", "media"),
-    ("Violência Doméstica",             "Goiânia, GO — Setor Jardim América",                "Moradora relata agressões verbais e físicas frequentes. Tentou registrar BO, mas se sentiu intimidada. Vizinhos solicitam apoio de assistência social.",      "alta"),
-    ("Assédio Moral",                   "São Luís, MA — Hospital público regional",          "Enfermeiras relatam chefia que distribui tarefas degradantes apenas para mulheres, faz piadas sexistas e pune quem reclama com escalas piores.",              "media"),
-    ("Assédio Virtual / Cyberbullying", "Porto Velho, RO — Facebook / grupos escolares",     "Grupo de alunos cria memes ofensivos com fotos de colegas do sexo feminino e circula em grupos de turma. Direção da escola foi comunicada.",                   "baixa"),
-    ("Importunação Sexual",             "Belém, PA — Ver-o-Peso",                            "Mulheres relatam apalpamentos e comentários sexuais na feira, especialmente em dias de maior movimento. Policiamento pedido por feirantes.",                  "media"),
-    ("Violência Física",                "Natal, RN — Bairro Lagoa Nova",                     "Mulher foi agredida com socos pelo companheiro após tentar terminar o relacionamento. Filho menor de idade presenciou. Medida protetiva solicitada.",         "alta"),
-    ("Assédio Sexual",                  "Vitória, ES — Escritório de advocacia — Centro",    "Advogada relata que sócio faz comentários sobre seu corpo e envia mensagens com conotação sexual. Dois outros funcionários testemunharam situações.",       "media"),
-]
-if not db.query(AlertaComunitario).first():
-    for titulo, localizacao, descricao, urgencia in alertas_seed:
-        db.add(AlertaComunitario(titulo=titulo, localizacao=localizacao,
-                                  descricao=descricao, urgencia=urgencia, confirmacoes=0))
-    print(f"  Alertas: {len(alertas_seed)} alertas inseridos")
-else:
-    print("  Alertas: já possui dados, ignorado")
+# Alertas do banco devem vir de envios da comunidade, não de exemplos de seed.
 
 db.commit()
 db.close()

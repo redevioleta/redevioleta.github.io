@@ -820,6 +820,22 @@ footer i            { color: #c084fc; }
   margin-bottom: 14px;
   border-left: 5px solid var(--border);
 }
+.caso-historico-card { border-left-color: #147d78; }
+.alerta-historico-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid #147d78;
+  border-radius: 4px;
+  background: #fff;
+  color: #115e59;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.alerta-historico-link:hover { background: #f0fdfa; }
 .urgencia-borda-alta  { border-left-color: var(--danger); }
 .urgencia-borda-media { border-left-color: var(--warning); }
 .urgencia-borda-baixa { border-left-color: var(--success); }

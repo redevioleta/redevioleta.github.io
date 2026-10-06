@@ -323,35 +323,35 @@
       <p>Conhecer casos históricos ajuda a compreender a importância da prevenção, da informação e da rede de proteção.</p>
       <div class="simple-cases-grid">
 
-        <article class="simple-case-card">
+        <article class="simple-case-card" id="caso-angela-diniz">
           <span class="case-year-badge">1976</span>
           <h3>Ângela Diniz</h3>
           <p>A socialite mineira foi assassinada pelo então namorado. O julgamento provocou grande debate social sobre a culpabilização da vítima e impulsionou discussões importantes sobre a violência contra mulheres.</p>
           <div class="case-msg-box">💜 O caso contribuiu para debates históricos sobre violência contra mulheres e sobre argumentos que culpabilizam vítimas.</div>
         </article>
 
-        <article class="simple-case-card">
+        <article class="simple-case-card" id="caso-daniella-perez">
           <span class="case-year-badge">1992</span>
           <h3>Daniella Perez</h3>
           <p>A atriz e bailarina foi assassinada em 1992. O caso provocou grande mobilização social e a participação de sua mãe, Gloria Perez, em mudanças na legislação penal.</p>
           <div class="case-msg-box">💜 O caso mostra como a mobilização social pode contribuir para mudanças importantes na legislação.</div>
         </article>
 
-        <article class="simple-case-card">
+        <article class="simple-case-card" id="caso-eloa-pimentel">
           <span class="case-year-badge">2008</span>
           <h3>Eloá Pimentel</h3>
           <p>Aos 15 anos, Eloá foi mantida em cárcere privado pelo ex-namorado em Santo André, SP. O caso teve grande repercussão nacional e o agressor foi condenado a 98 anos e 8 meses.</p>
           <div class="case-msg-box">💜 O caso reforça a importância de reconhecer situações de controle e ameaça e buscar ajuda.</div>
         </article>
 
-        <article class="simple-case-card">
+        <article class="simple-case-card" id="caso-eliza-samudio">
           <span class="case-year-badge">2010</span>
           <h3>Eliza Samudio</h3>
           <p>Eliza desapareceu em 2010. O caso envolveu o então goleiro Bruno Fernandes e teve grande repercussão nacional, evidenciando a importância de redes de proteção.</p>
           <div class="case-msg-box">💜 A história reforça a importância de redes de proteção e de canais para pedir ajuda.</div>
         </article>
 
-        <article class="simple-case-card">
+        <article class="simple-case-card" id="caso-mercia-nakashima">
           <span class="case-year-badge">2010</span>
           <h3>Mércia Nakashima</h3>
           <p>A advogada foi assassinada em 2010. O caso foi julgado pelo Tribunal do Júri de Guarulhos — primeiro julgamento televisionado ao vivo no Brasil. O agressor foi condenado a 22 anos e 8 meses.</p>
@@ -877,7 +877,11 @@
         <div class="btn-row"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-bell"></i> Publicar Alerta</button><button type="button" class="btn btn-outline" onclick="resetAlertaForm()"><i class="fa-solid fa-trash"></i> Limpar</button></div>
       </form>
     </div>
-    <div class="alert alert-warning demo-disclosure" role="note"><span><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span><span>O feed pode combinar <strong>dados fictícios para demonstração</strong> e relatos enviados por usuários, que não são verificados. Não use estes avisos como confirmação de perigo ou segurança local.</span></div>
+    <div class="card historical-cases-intro">
+      <h2><i class="fa-solid fa-book-open" aria-hidden="true"></i> Casos históricos reais</h2>
+      <p>Os cartões abaixo são baseados nos cinco casos históricos apresentados em “Conheça os Casos”. São registros educativos, não alertas atuais nem indicação de risco nos locais citados.</p>
+      <p>Relatos enviados pela comunidade aparecem identificados como não verificados e não devem ser tratados como fatos confirmados.</p>
+    </div>
     <div class="alert-filters" role="group" aria-label="Filtrar alertas">
       <button class="filter-btn active" onclick="filtrarAlertas('todos')">Todos</button>
       <button class="filter-btn" onclick="filtrarAlertas('Sexual')">Sexual</button>
@@ -887,7 +891,7 @@
       <button class="filter-btn filter-urgente" onclick="filtrarAlertas('__alta__')"><i class="fa-solid fa-triangle-exclamation"></i> Urgentes</button>
     </div>
     <div id="alertaFeed"></div>
-    <div id="alertaVazio" class="alert alert-info mt-14 is-hidden"><span><i class="fa-solid fa-magnifying-glass"></i></span><span>Nenhum alerta encontrado para este filtro.</span></div>
+    <div id="alertaVazio" class="alert alert-info mt-14 is-hidden"><span><i class="fa-solid fa-magnifying-glass"></i></span><span>Nenhum caso ou relato encontrado para este filtro.</span></div>
   </section>
 
   <!-- ══════ PROJETO ACADÊMÍCO ══════ -->

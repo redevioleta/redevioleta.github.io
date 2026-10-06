@@ -297,7 +297,7 @@ function filtrarFAQ(termo) {
 
 /* ── Alertas ── */
 const ALERTAS_KEY = 'fs_alertas';
-const ALERTAS_VER = 2; // incrementar quando o seed mudar
+const ALERTAS_VER = 3;
 
 const alertasSeed = [
   { id: 1,  tipo: 'Importunação Sexual',             cidade: 'São Paulo',        uf: 'SP', local: 'Metrô Linha 2-Verde',              desc: 'Relatos recorrentes de importunação sexual nos vagões entre as estações Paraíso e Ana Rosa nos horários de pico.',                                                urgencia: 'alta',  ts: Date.now() - 3600000,    confirmacoes: 18 },
@@ -319,17 +319,38 @@ const alertasSeed = [
   { id: 17, tipo: 'Violência Física',                 cidade: 'Natal',            uf: 'RN', local: 'Bairro Lagoa Nova',                   desc: 'Mulher foi agredida com socos pelo companheiro após tentar terminar o relacionamento. Filho menor de idade presenciou. Medida protetiva solicitada.',         urgencia: 'alta',  ts: Date.now() - 45000000,   confirmacoes: 11 },
   { id: 18, tipo: 'Assédio Sexual',                   cidade: 'Vitória',          uf: 'ES', local: 'Escritório de advocacia — Centro',    desc: 'Advogada relata que sócio faz comentários sobre seu corpo e envia mensagens com conotação sexual. Dois outros funcionários testemunharam situações.',       urgencia: 'media', ts: Date.now() - 64800000,   confirmacoes: 8  },
 ];
-const demoAlertIds = new Set(alertasSeed.map(alerta => alerta.id));
+const alertasDemoDescriptions = new Set(alertasSeed.map(alerta => alerta.desc));
+
+function carregarCasosHistoricos() {
+  return [...document.querySelectorAll('#tab-identificar .simple-case-card')]
+    .map(card => {
+      const ano = Number(card.querySelector('.case-year-badge')?.textContent.trim());
+      const titulo = card.querySelector('h3')?.textContent.trim();
+      const descricao = card.querySelector('p')?.textContent.trim();
+      if (!card.id || !titulo || !descricao || !Number.isFinite(ano)) return null;
+      return {
+        id: `historico_${card.id}`,
+        titulo,
+        tipo: 'Violência contra a mulher',
+        descricao,
+        ano,
+        caseId: card.id,
+        historico: true,
+      };
+    })
+    .filter(Boolean);
+}
 
 function loadAlertas() {
   try {
-    const ver   = parseInt(localStorage.getItem(ALERTAS_KEY + '_v') || '0');
+    const versaoSalva = parseInt(localStorage.getItem(ALERTAS_KEY + '_v') || '0');
     const saved = localStorage.getItem(ALERTAS_KEY);
-    if (saved && ver === ALERTAS_VER) return JSON.parse(saved);
-    localStorage.removeItem(ALERTAS_KEY);
+    const alertas = saved ? JSON.parse(saved) : [];
+    const relatos = alertas.filter(alerta => !alertasDemoDescriptions.has(alerta.desc));
     localStorage.setItem(ALERTAS_KEY + '_v', String(ALERTAS_VER));
-    return alertasSeed.map(a => ({ ...a }));
-  } catch { return alertasSeed.map(a => ({ ...a })); }
+    if (versaoSalva !== ALERTAS_VER || relatos.length !== alertas.length) saveAlertas(relatos);
+    return relatos;
+  } catch { return []; }
 }
 
 function saveAlertas(lista) {
@@ -357,6 +378,11 @@ const urgenciaClass = { alta: 'urgencia-tag-alta', media: 'urgencia-tag-media', 
 
 let filtroAtivo = 'todos';
 
+function abrirCasoHistorico(caseId) {
+  switchTab('identificar');
+  document.getElementById(caseId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 /* renderiza a lista atual de alertas no DOM (síncrono) */
 function _paintFeed(lista) {
   const feed  = document.getElementById('alertaFeed');
@@ -364,36 +390,45 @@ function _paintFeed(lista) {
   if (!feed) return;
   const filtrados = lista.filter(a => {
     if (filtroAtivo === 'todos')    return true;
-    if (filtroAtivo === '__alta__') return a.urgencia === 'alta';
-    return a.tipo.toLowerCase().includes(filtroAtivo.toLowerCase());
+    if (filtroAtivo === '__alta__') return !a.historico && a.urgencia === 'alta';
+    return `${a.tipo || ''} ${a.titulo || ''}`.toLowerCase().includes(filtroAtivo.toLowerCase());
   });
   vazio.classList.toggle('is-hidden', filtrados.length > 0);
-  feed.innerHTML = filtrados.map(a => `
-    <div class="alerta-card urgencia-borda-${a.urgencia}">
+  feed.innerHTML = filtrados.map(a => {
+    const historico = !!a.historico;
+    const titulo = historico ? a.titulo : a.tipo;
+    const origem = historico
+      ? `Caso histórico real · ${a.ano}`
+      : a.origemLocal ? 'Rascunho local; não enviado' : 'Relato comunitário; não verificado';
+    return `
+    <div class="alerta-card ${historico ? 'caso-historico-card' : `urgencia-borda-${a.urgencia}`}"${historico ? ' data-historico="true"' : ''}>
       <div class="alerta-header">
-        <span class="alerta-tipo">${escapeHtml(textoNoIdioma(a.tipo))}</span>
-        <span class="alerta-origin">${demoAlertIds.has(a.id) ? 'Dados fictícios para demonstração' : a.origemLocal ? 'Rascunho local; não enviado' : 'Relato comunitário; não verificado'}</span>
-        <span class="urgencia-tag ${urgenciaClass[a.urgencia]}">
+        <span class="alerta-tipo">${escapeHtml(textoNoIdioma(titulo))}</span>
+        <span class="alerta-origin">${origem}</span>
+        ${!historico ? `<span class="urgencia-tag ${urgenciaClass[a.urgencia]}">
           <i class="fa-solid fa-circle"></i> ${urgenciaLabel[a.urgencia]}
-        </span>
+        </span>` : ''}
       </div>
-      <div class="alerta-local">
-        <i class="fa-solid fa-location-dot"></i>
-        <strong>${escapeHtml(a.cidade)}, ${escapeHtml(a.uf)}</strong>${a.local ? ` — ${escapeHtml(a.local)}` : ''}
-      </div>
-      <p class="alerta-desc">${escapeHtml(a.desc)}</p>
+      ${historico
+        ? `<div class="alerta-local"><i class="fa-solid fa-calendar" aria-hidden="true"></i><strong>Registro histórico · ${a.ano}</strong></div>`
+        : `<div class="alerta-local"><i class="fa-solid fa-location-dot"></i><strong>${escapeHtml(a.cidade)}, ${escapeHtml(a.uf)}</strong>${a.local ? ` — ${escapeHtml(a.local)}` : ''}</div>`}
+      <p class="alerta-desc">${escapeHtml(a.descricao || a.desc)}</p>
       ${a.moderado_ia && a.resumo_ia ? `
       <div class="alerta-ia">
         <span class="alerta-ia-badge"><i class="fa-solid fa-robot"></i> Moderado pela Violeta IA</span>
         <p class="alerta-ia-resumo">${escapeHtml(a.resumo_ia)}</p>
       </div>` : ''}
       <div class="alerta-footer">
-        <span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
-        <button class="alerta-confirmar" onclick="confirmarAlerta(${typeof a.id === 'string' ? `'${a.id}'` : a.id})" aria-label="Confirmar alerta">
+        ${historico
+          ? `<span class="alerta-ts"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Caso educativo; não é alerta atual</span>
+            <button class="alerta-historico-link" type="button" onclick="abrirCasoHistorico('${escapeHtml(a.caseId)}')">Ver caso completo</button>`
+          : `<span class="alerta-ts"><i class="fa-regular fa-clock"></i> ${timeAgo(a.ts)}</span>
+        <button class="alerta-confirmar" onclick="confirmarAlerta(${typeof a.id === 'string' ? `'${a.id}'` : a.id})" aria-label="Confirmar relato comunitário">
           <i class="fa-solid fa-triangle-exclamation"></i> Confirmar <span class="conf-count">${a.confirmacoes}</span>
-        </button>
+        </button>`}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function _mapBackendAlerta(a) {
@@ -421,18 +456,15 @@ async function renderFeed() {
 
   const backendData = await apiFetch('/alertas/');
 
-  if (backendData?.length) {
-    // Dados da API são a fonte principal
-    const backendAlertas = backendData.map(_mapBackendAlerta);
-    // Inclui alertas criados localmente que ainda não estão na API
-    const localOnly = loadAlertas().filter(a =>
-      typeof a.id !== 'number' || !backendAlertas.some(b => b.desc === a.desc)
-    );
-    _paintFeed([...backendAlertas, ...localOnly].sort((a, b) => b.ts - a.ts));
-  } else {
-    // Fallback: dados locais/seed quando a API não está disponível
-    _paintFeed(loadAlertas().sort((a, b) => b.ts - a.ts));
-  }
+  const casosHistoricos = carregarCasosHistoricos();
+  const relatosApi = backendData?.length
+    ? backendData.map(_mapBackendAlerta).filter(a => !alertasDemoDescriptions.has(a.desc))
+    : [];
+  const relatosLocais = loadAlertas().filter(a =>
+    !alertasDemoDescriptions.has(a.desc) && !relatosApi.some(b => b.desc === a.desc)
+  );
+  const relatos = [...relatosApi, ...relatosLocais].sort((a, b) => b.ts - a.ts);
+  _paintFeed([...casosHistoricos, ...relatos]);
 }
 
 function filtrarAlertas(filtro) {
