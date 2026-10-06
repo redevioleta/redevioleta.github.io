@@ -78,7 +78,8 @@ function respostaLocalDeFallback(text, language) {
     if (/180|report|complaint|guidance/.test(q)) return 'The 180 hotline is Brazil’s Women’s Support Center. It is free and operates 24 hours a day, providing guidance on rights and support services.';
     if (/police station|deam/.test(q)) return 'A DEAM is a specialized police station for women. Open the Resources tab to find more information about specialized support services.';
     if (/violence|abuse|harassment/.test(q)) return 'Violence against women can be physical, psychological, sexual, financial, or moral. If this is happening to you, contact someone you trust or a specialized support service.';
-    if (/afraid|fear|alone|sad|anxious/.test(q)) return 'I am sorry you are going through this. You deserve to be heard and respected. If it is safe, talk to someone you trust. In an emergency, call 190.';
+    if (/therapist|therapy|psychologist/.test(q)) return 'I am not a psychologist or therapist and cannot diagnose or provide treatment, but I can listen without judgment and help you think through one small next step. If you want ongoing care, consider speaking with a mental health professional. What feels hardest right now?';
+    if (/afraid|fear|alone|sad|anxious|need to talk|want to talk|feeling overwhelmed/.test(q)) return 'I am sorry this feels difficult. You do not have to solve everything at once. If you want, tell me what feels hardest right now; I can listen without judgment and help you think through one small next step. I am not a therapist and cannot diagnose or provide treatment.';
     if (/case|angela|daniella|eloa|eliza|mercia/.test(q)) return 'The “Learn about the Cases” tab presents historical cases for educational purposes: Ângela Diniz, Daniella Perez, Eloá Pimentel, Eliza Samudio, and Mércia Nakashima.';
     if (/law|maria da penha|right/.test(q)) return 'Brazil has specific legislation to protect women, including the Maria da Penha Law. For legal guidance, contact the Public Defender’s Office or a specialized legal service.';
     if (/site|rede violeta|project/.test(q)) return 'Rede Violeta is an academic project by Faculdade Cruzeiro do Sul. It brings together information, awareness, and support options related to violence against women.';
@@ -89,14 +90,15 @@ function respostaLocalDeFallback(text, language) {
     if (/180|denuncia|orienta/.test(q)) return 'La línea 180 es el Centro de Atención a las Mujeres de Brasil. Es gratuita y funciona las 24 horas. Ofrece orientación sobre derechos y servicios de apoyo.';
     if (/comisaría|policia|deam/.test(q)) return 'La DEAM es una comisaría especializada en la atención a las mujeres. Consulta la pestaña Recursos para obtener más información sobre los servicios especializados.';
     if (/acoso|violencia|abuso/.test(q)) return 'La violencia contra las mujeres puede ser física, psicológica, sexual, patrimonial o moral. Si estás viviendo esta situación, busca a alguien de confianza o un servicio especializado.';
-    if (/miedo|sola|triste|ansio/.test(q)) return 'Siento mucho que estés pasando por esto. Mereces que te escuchen y te respeten. Si es seguro, habla con alguien de confianza. En una emergencia, llama al 190.';
+    if (/terapeuta|terapia|psic[oó]log/.test(q)) return 'No soy psicóloga ni terapeuta y no puedo diagnosticar ni ofrecer tratamiento, pero puedo escucharte sin juzgar y ayudarte a pensar en un paso pequeño. Si buscas apoyo continuo, considera hablar con un profesional de salud mental. ¿Qué es lo que más te pesa ahora?';
+    if (/miedo|sola|triste|ansio|necesito hablar|quiero hablar|abrumad/.test(q)) return 'Siento que esto sea difícil. No tienes que resolverlo todo ahora. Si quieres, cuéntame qué es lo que más te pesa; puedo escucharte sin juzgar y ayudarte a pensar en un paso pequeño. No soy terapeuta ni puedo diagnosticar u ofrecer tratamiento.';
     if (/caso|angela|daniella|eloa|eliza|mercia/.test(q)) return 'La pestaña “Conoce los casos” presenta casos históricos con fines educativos: Ângela Diniz, Daniella Perez, Eloá Pimentel, Eliza Samudio y Mércia Nakashima.';
     if (/ley|maria da penha|derecho/.test(q)) return 'Brasil cuenta con legislación específica para proteger a las mujeres, incluida la Ley Maria da Penha. Para recibir orientación jurídica, contacta con la Defensoría Pública o un servicio especializado.';
     if (/sitio|rede violeta|proyecto/.test(q)) return 'Rede Violeta es un proyecto académico de la Faculdade Cruzeiro do Sul. Reúne información, concienciación y opciones de apoyo frente a la violencia contra las mujeres.';
     return 'Puedo ayudarte con información sobre los recursos de Rede Violeta, teléfonos de emergencia, casos históricos o formas de buscar apoyo. ¡Soy Violeta! 💜';
   }
 
-  let r = 'Posso ajudar com informações sobre os recursos da Rede Violeta, canais de emergência, casos históricos ou formas de buscar apoio. Sou a Violeta! 💜';
+  let r = 'Posso ouvir sem julgamento e ajudar você a pensar em um próximo passo, além de compartilhar informações sobre a Rede Violeta. Não sou psicóloga e não substituo acompanhamento profissional. 💜';
 
   if (q.includes('perigo') || q.includes('socorro') || q.includes('amea') || q.includes('agredindo') || q.includes('agress')) {
     r = 'Se você estiver em perigo imediato, priorize sua segurança. Se puder, vá para um local seguro e ligue 190. O Ligue 180 também oferece orientação e informações sobre a rede de atendimento.';
@@ -116,8 +118,10 @@ function respostaLocalDeFallback(text, language) {
     r = 'A DEAM é a Delegacia Especializada de Atendimento à Mulher. Ela integra a rede de atendimento especializado. Use a aba Recursos para encontrar mais informações.';
   } else if (q.includes('violênci') || q.includes('violenc')) {
     r = 'Violência contra a mulher pode assumir diferentes formas: física, psicológica, sexual, patrimonial e moral. Se você estiver vivendo isso, procure uma pessoa de confiança ou um serviço especializado.';
-  } else if (q.includes('medo') || q.includes('sozinha') || q.includes('triste') || q.includes('ansio')) {
-    r = 'Sinto muito que você esteja passando por isso. Você merece ser ouvida e respeitada. Se for seguro, converse com alguém de confiança. Em uma emergência, ligue 190.';
+  } else if (q.includes('psicóloga') || q.includes('psicologa') || q.includes('psicólogo') || q.includes('psicologo') || q.includes('terapia') || q.includes('terapeuta')) {
+    r = 'Não sou psicóloga nem terapeuta e não posso fazer diagnóstico ou terapia, mas posso ouvir sem julgamento e ajudar você a pensar em um próximo passo. Se busca acompanhamento, procure um profissional de saúde mental. O que está pesando mais para você agora?';
+  } else if (q.includes('medo') || q.includes('sozinha') || q.includes('triste') || q.includes('ansio') || q.includes('preciso conversar') || q.includes('quero conversar') || q.includes('quero falar') || q.includes('estou me sentindo') || q.includes('como me sinto') || q.includes('estou mal') || q.includes('me sinto') || q.includes('angustiada') || q.includes('sobrecarregada')) {
+    r = 'Sinto muito que esteja passando por isso. Você não precisa resolver tudo de uma vez; posso ouvir sem julgamento e ajudar a pensar em um passo pequeno. O que está pesando mais para você agora? Não sou psicóloga e não substituo acompanhamento profissional.';
   } else if (q.includes('caso') || q.includes('angela') || q.includes('ângela') || q.includes('daniella') || q.includes('eloá') || q.includes('eloa') || q.includes('eliza') || q.includes('mércia') || q.includes('mercia')) {
     r = 'Na aba “Conheça os Casos”, a Rede Violeta apresenta casos históricos de forma educativa: Ângela Diniz, Daniella Perez, Eloá Pimentel, Eliza Samudio e Mércia Nakashima.';
   } else if (q.includes('lei') || q.includes('maria da penha') || q.includes('direito')) {
