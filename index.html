@@ -90,9 +90,6 @@
   <button class="a11y-fab" id="a11yFab" onclick="painelAcessibilidade()" aria-haspopup="true" aria-expanded="false" aria-controls="a11yPanel" aria-label="Abrir opções de acessibilidade">
     <i class="fa-solid fa-universal-access" aria-hidden="true"></i><span>Acessibilidade</span>
   </button>
-  <button class="discreet-mode-btn" id="discreetModeBtn" type="button" onclick="alternarModoDiscreto()" aria-pressed="false">
-    <i class="fa-solid fa-eye-slash" aria-hidden="true"></i> Modo secreto
-  </button>
   <button class="quick-exit-btn" id="quickExitBtn" onclick="saidaRapida()" aria-label="Sair rapidamente deste site e ir para uma página neutra">
     <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Saída rápida
   </button>
@@ -249,6 +246,14 @@
       <button type="button" class="btn btn-primary" onclick="openAssistant()">
         <i class="fa-solid fa-comments" aria-hidden="true"></i> Conversar com a Violeta
       </button>
+    </div>
+
+    <div class="card violeta-video-card">
+      <h2>Vídeo da Rede Violeta</h2>
+      <video controls playsinline preload="metadata" aria-label="Vídeo da Rede Violeta">
+        <source src="video/violeta.mp4" type="video/mp4">
+        Seu navegador não oferece suporte à reprodução de vídeo.
+      </video>
     </div>
 
     <div class="card">
@@ -941,7 +946,7 @@
       <section class="about-block">
         <h3>Privacidade e segurança</h3>
         <p>Sabemos que buscar informações sobre violência pode exigir cuidado e discrição.</p>
-        <p>A Rede Violeta oferece recursos como <strong>modo discreto, saída rápida e plano de segurança</strong> para apoiar uma navegação mais cuidadosa.</p>
+        <p>A Rede Violeta oferece recursos como <strong>saída rápida e plano de segurança</strong> para apoiar uma navegação mais cuidadosa.</p>
       </section>
 
       <section class="about-block">

@@ -724,26 +724,6 @@ function switchMapTab(mode) {
   leafletMap.invalidateSize();
 }
 
-function alternarModoDiscreto() {
-  const html = document.documentElement;
-  const ativo = !html.classList.contains('discreet-mode');
-  const botao = document.getElementById('discreetModeBtn');
-  const titulo = document.querySelector('header h1');
-  const subtitulo = document.querySelector('header .h1-sub');
-  const descricao = document.querySelector('.header-inner > p:not(.h1-sub)');
-  html.classList.toggle('discreet-mode', ativo);
-  document.title = ativo ? 'Página inicial' : 'Rede Violeta';
-  if (titulo) titulo.textContent = ativo ? 'Página inicial' : 'Rede Violeta';
-  if (subtitulo) subtitulo.textContent = ativo ? 'Informações e serviços' : 'Rede Violeta — Juntas contra a violência';
-  if (descricao) descricao.textContent = ativo ? 'Conteúdo informativo disponível.' : 'Um espaço seguro para desabafar, aprender e denunciar o assédio.';
-  if (botao) {
-    botao.setAttribute('aria-pressed', String(ativo));
-    botao.innerHTML = ativo
-      ? '<i class="fa-solid fa-eye" aria-hidden="true"></i> Desativar modo secreto'
-      : '<i class="fa-solid fa-eye-slash" aria-hidden="true"></i> Modo secreto';
-  }
-}
-
 function abrirBuscaApoio() {
   const cidade = document.getElementById('supportCity').value.trim();
   if (!cidade) {

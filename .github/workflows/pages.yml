@@ -34,6 +34,7 @@ jobs:
           cp manifest.webmanifest _site/
           cp service-worker.js _site/
           cp -r img _site/
+          cp -r video _site/
 
       - uses: actions/upload-pages-artifact@v3
         with:
