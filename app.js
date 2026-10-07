@@ -138,7 +138,7 @@ async function enviarDesabafo() {
     body: JSON.stringify({ descricao_situacao: txt }),
   });
   if (classif?.resultado) {
-    classifEl.innerHTML = `<span><i class="fa-solid fa-robot"></i></span><span>${classif.resultado}</span>`;
+    classifEl.innerHTML = `<span><i class="fa-solid fa-robot"></i></span><span>${escapeHtml(classif.resultado)}</span>`;
     classifEl.classList.remove('is-hidden');
     document.getElementById('btnFormalizar').classList.remove('is-hidden');
   }
