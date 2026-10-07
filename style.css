@@ -1095,6 +1095,8 @@ footer i            { color: #c084fc; }
 .violeta-support-card { border-left: 4px solid var(--purple-dark); }
 .violeta-support-card h2 { margin-bottom: 8px; }
 .violeta-support-limit { color: var(--muted); font-size: .86rem; }
+.violeta-video-card h2 { margin-bottom: 12px; }
+.violeta-video-card video { display: block; width: 100%; height: auto; border-radius: 10px; background: #000; }
 
 /* ── Casos Históricos Simples ── */
 .simple-cases-grid {
